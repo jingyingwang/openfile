@@ -365,14 +365,106 @@
       </Derived>
     </Fact>
 
+    <Fact path="/seniorStandardDeductionAmount">
+      <Name>OBBBA Senior Standard Deduction Amount</Name>
+      <Description>Additional standard deduction for taxpayers age 65 or older under OBBBA.
+        Available TY2025-2028. $4,000 per qualifying individual. Not available to MFS filers.
+        Phaseout: reduced by $0.06 per $1 of MAGI over threshold ($75,000 Single/HoH, $150,000 MFJ).</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>4000</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/seniorStandardDeductionQualifyingCount">
+      <Name>OBBBA Senior Standard Deduction Qualifying Count</Name>
+      <Description>Number of individuals qualifying for the OBBBA senior standard deduction bonus.
+        Counts primary filer if 65+ and secondary filer if 65+ (for MFJ).
+        MFS filers are excluded entirely. Available TY2025-2028.</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Switch>
+          <!-- MFS filers do not qualify for the senior bonus -->
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+            </When>
+            <Then>
+              <Int>0</Int>
+            </Then>
+          </Case>
+          <!-- MFJ: count both primary and secondary if 65+ -->
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+            </When>
+            <Then>
+              <Add>
+                <Count>
+                  <Dependency module="filers" path="/primaryFiler/age65OrOlder" />
+                </Count>
+                <Count>
+                  <Dependency path="/secondaryFilerIs65OrOlderForDeduction" />
+                </Count>
+              </Add>
+            </Then>
+          </Case>
+          <!-- Single, HoH, QSS: only primary filer -->
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Count>
+                <Dependency module="filers" path="/primaryFiler/age65OrOlder" />
+              </Count>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/seniorStandardDeductionBeforePhaseout">
+      <Name>OBBBA Senior Standard Deduction Before Phaseout</Name>
+      <Description>Total OBBBA senior standard deduction before MAGI phaseout.
+        Qualifying count × $4,000. TODO: Apply phaseout reduction of $0.06 per $1 of MAGI
+        over threshold ($75,000 Single/HoH, $150,000 MFJ) in a follow-up phase.</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Multiply>
+          <Dependency path="/seniorStandardDeductionQualifyingCount" />
+          <Dependency path="/seniorStandardDeductionAmount" />
+        </Multiply>
+      </Derived>
+    </Fact>
+
     <Fact path="/normalStandardDeduction">
       <Name>Normal standard deduction</Name>
       <Description>The amount to use as the standard deduction if a filer cannot be claimed as a dependent.</Description>
+      <TaxYear>2024</TaxYear>
 
       <Derived>
         <Add>
           <Dependency path="/filingStatusStandardDeduction" />
           <Dependency path="/additionalStandardDeduction" />
+        </Add>
+      </Derived>
+    </Fact>
+
+    <Fact path="/normalStandardDeduction">
+      <Name>Normal standard deduction</Name>
+      <Description>The amount to use as the standard deduction if a filer cannot be claimed as a dependent.
+        Includes OBBBA senior standard deduction bonus for TY2025+.</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Add>
+          <Dependency path="/filingStatusStandardDeduction" />
+          <Dependency path="/additionalStandardDeduction" />
+          <Dependency path="/seniorStandardDeductionBeforePhaseout" />
         </Add>
       </Derived>
     </Fact>

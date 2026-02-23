@@ -966,6 +966,19 @@
       </Derived>
     </Fact>
 
+    <Fact path="/phaseInEndsFor0QualifyingChildren">
+      <Name>Maximum phase in amount with 0 children</Name>
+      <Description>The earned income amount which provides the max EITC with 0 qualifying children
+        Rev Proc .06 Earned
+        Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>8940</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/phaseInEndsFor1QualifyingChild">
       <Name>Maximum phase in amount with 1 child</Name>
       <Description>The earned income amount which provides the max EITC with 1 qualifying child
@@ -979,6 +992,19 @@
       </Derived>
     </Fact>
 
+    <Fact path="/phaseInEndsFor1QualifyingChild">
+      <Name>Maximum phase in amount with 1 child</Name>
+      <Description>The earned income amount which provides the max EITC with 1 qualifying child
+        Rev Proc .06 Earned
+        Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>12730</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/phaseInEndsFor2OrMoreQualifyingChildren">
       <Name>Maximum phase in amount with 2 or more children</Name>
       <Description>The earned income amount which provides the max EITC with 2 or more qualifying children
@@ -989,6 +1015,19 @@
 
       <Derived>
         <Dollar>17400</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/phaseInEndsFor2OrMoreQualifyingChildren">
+      <Name>Maximum phase in amount with 2 or more children</Name>
+      <Description>The earned income amount which provides the max EITC with 2 or more qualifying children
+        Rev Proc .06
+        Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>17880</Dollar>
       </Derived>
     </Fact>
 
@@ -1350,6 +1389,107 @@
       </Derived>
     </Fact>
 
+    <Fact path="/eitcPhaseOutThreshold">
+      <Name>EITC phaseout amount threshold</Name>
+      <Description>The amount of income above which the amount of EITC begins to be reduced.
+        Rev Proc .06 Earned Income
+        Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusSingle" />
+                <Dependency module="filingStatus" path="/isFilingStatusHOH" />
+                <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+                <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+              </Any>
+            </When>
+            <Then>
+              <Switch>
+                <Case>
+                  <When>
+                    <Equal>
+                      <Left>
+                        <Dependency module="familyAndHousehold"
+                          path="/numEitcDependentsCollectionForCalculation" />
+                      </Left>
+                      <Right>
+                        <Int>0</Int>
+                      </Right>
+                    </Equal>
+                  </When>
+                  <Then>
+                    <Dollar>10620</Dollar>
+                  </Then>
+                </Case>
+                <Case>
+                  <When>
+                    <GreaterThanOrEqual>
+                      <Left>
+                        <Dependency module="familyAndHousehold"
+                          path="/numEitcDependentsCollectionForCalculation" />
+                      </Left>
+                      <Right>
+                        <Int>1</Int>
+                      </Right>
+                    </GreaterThanOrEqual>
+                  </When>
+                  <Then>
+                    <Dollar>23350</Dollar>
+                  </Then>
+                </Case>
+              </Switch>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+            </When>
+            <Then>
+              <Switch>
+                <Case>
+                  <When>
+                    <Equal>
+                      <Left>
+                        <Dependency module="familyAndHousehold"
+                          path="/numEitcDependentsCollectionForCalculation" />
+                      </Left>
+                      <Right>
+                        <Int>0</Int>
+                      </Right>
+                    </Equal>
+                  </When>
+                  <Then>
+                    <Dollar>17730</Dollar>
+                  </Then>
+                </Case>
+                <Case>
+                  <When>
+                    <GreaterThanOrEqual>
+                      <Left>
+                        <Dependency module="familyAndHousehold"
+                          path="/numEitcDependentsCollectionForCalculation" />
+                      </Left>
+                      <Right>
+                        <Int>1</Int>
+                      </Right>
+                    </GreaterThanOrEqual>
+                  </When>
+                  <Then>
+                    <Dollar>30470</Dollar>
+                  </Then>
+                </Case>
+              </Switch>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
     <Fact path="/belowEitcInvestmentIncomeLimit">
       <Name>Below EITC Investment Income Limit</Name>
       <Description>Whether the TP's Investment Income is low enough for the EITC
@@ -1374,6 +1514,35 @@
           <Right>
             <!-- Limit for 2024 -->
             <Dollar>11600</Dollar>
+          </Right>
+        </LessThanOrEqual>
+      </Derived>
+    </Fact>
+
+    <Fact path="/belowEitcInvestmentIncomeLimit">
+      <Name>Below EITC Investment Income Limit</Name>
+      <Description>Whether the TP's Investment Income is low enough for the EITC
+        Rev Proc .06 Earned Income Credit §32(i)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <LessThanOrEqual>
+          <Left>
+            <!-- The investment income from lines 2a, 2b, 3b, and 7 per 1040 instructions -->
+            <Add>
+              <Dependency module="interest" path="/taxExemptInterest" />
+              <Dependency module="interest" path="/interestIncome" />
+              <Dependency module="income" path="/ordinaryDividends" />
+              <GreaterOf>
+                <Dependency module="income" path="/capitalGainsOrLosses" />
+                <Dollar>0</Dollar>
+              </GreaterOf>
+            </Add>
+          </Left>
+          <Right>
+            <!-- Limit for 2025 -->
+            <Dollar>11950</Dollar>
           </Right>
         </LessThanOrEqual>
       </Derived>
@@ -1983,6 +2152,17 @@
       </Derived>
     </Fact>
 
+    <Fact path="/eitcMfjLimitWithThreeOrMoreChildren">
+      <Name>EITC (MFJ) limit with 3 or more children</Name>
+      <Description>EITC limit with 3 or more children when filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>68675</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/eitcSelfLimitWithThreeOrMoreChildren">
       <Name>EITC (self) limit with 3 or more children</Name>
       <Description>EITC limit with 3 or more children when not filing as MFJ
@@ -1991,6 +2171,17 @@
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>59899</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/eitcSelfLimitWithThreeOrMoreChildren">
+      <Name>EITC (self) limit with 3 or more children</Name>
+      <Description>EITC limit with 3 or more children when not filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>61555</Dollar>
       </Derived>
     </Fact>
 
@@ -2005,6 +2196,17 @@
       </Derived>
     </Fact>
 
+    <Fact path="/eitcMfjLimitWithTwoChildren">
+      <Name>EITC (MFJ) limit with 2 children</Name>
+      <Description>EITC limit with 2 children when filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>64430</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/eitcSelfLimitWithTwoChildren">
       <Name>EITC (self) limit with 2 children</Name>
       <Description>EITC limit with 2 children when not filing as MFJ
@@ -2013,6 +2215,17 @@
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>55768</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/eitcSelfLimitWithTwoChildren">
+      <Name>EITC (self) limit with 2 children</Name>
+      <Description>EITC limit with 2 children when not filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>57310</Dollar>
       </Derived>
     </Fact>
 
@@ -2027,6 +2240,17 @@
       </Derived>
     </Fact>
 
+    <Fact path="/eitcMfjLimitWithOneChild">
+      <Name>EITC (MFJ) limit with 1 child</Name>
+      <Description>EITC limit with 1 child when filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>57554</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/eitcSelfLimitWithOneChild">
       <Name>EITC (self) limit with 1 child</Name>
       <Description>EITC limit with 1 child when not filing as MFJ
@@ -2035,6 +2259,17 @@
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>49084</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/eitcSelfLimitWithOneChild">
+      <Name>EITC (self) limit with 1 child</Name>
+      <Description>EITC limit with 1 child when not filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>50434</Dollar>
       </Derived>
     </Fact>
 
@@ -2049,6 +2284,17 @@
       </Derived>
     </Fact>
 
+    <Fact path="/eitcMfjLimitWithZeroChildren">
+      <Name>EITC (MFJ) limit with 0 children</Name>
+      <Description>EITC limit with 0 children when filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>26214</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/eitcSelfLimitWithZeroChildren">
       <Name>EITC (self) limit with 0 children</Name>
       <Description>EITC limit with 0 children when not filing as MFJ
@@ -2057,6 +2303,17 @@
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>18591</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/eitcSelfLimitWithZeroChildren">
+      <Name>EITC (self) limit with 0 children</Name>
+      <Description>EITC limit with 0 children when not filing as MFJ
+        Rev Proc .06 Earned Income Credit §32(b)
+      </Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>19104</Dollar>
       </Derived>
     </Fact>
 

@@ -1234,6 +1234,40 @@
       </Derived>
     </Fact>
 
+    <Fact path="/federalPovertyLineMagicNumberStartingNumber">
+      <Description>Magic number for the federal poverty line starting number based on residence, this form uses the
+        previous year's number. 2024 HHS Federal Poverty Guidelines.</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency path="/federalPovertyLineLocationIsAlaska" />
+            </When>
+            <Then>
+              <Dollar>18810</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency path="/federalPovertyLineLocationIsHawaii" />
+            </When>
+            <Then>
+              <Dollar>17310</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency path="/federalPovertyLineLocationIsOther" />
+            </When>
+            <Then>
+              <Dollar>15060</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
     <Fact path="/federalPovertyLineMagicNumberIncrement">
       <Description>Magic number for the federal poverty line increment based on residence, this form uses the previous
         year's number</Description>
@@ -1262,6 +1296,40 @@
             </When>
             <Then>
               <Dollar>5140</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/federalPovertyLineMagicNumberIncrement">
+      <Description>Magic number for the federal poverty line increment based on residence, this form uses the previous
+        year's number. 2024 HHS Federal Poverty Guidelines.</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency path="/federalPovertyLineLocationIsAlaska" />
+            </When>
+            <Then>
+              <Dollar>6730</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency path="/federalPovertyLineLocationIsHawaii" />
+            </When>
+            <Then>
+              <Dollar>6190</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency path="/federalPovertyLineLocationIsOther" />
+            </When>
+            <Then>
+              <Dollar>5380</Dollar>
             </Then>
           </Case>
         </Switch>
@@ -9365,10 +9433,28 @@
       </Derived>
     </Fact>
 
+    <Fact path="/ptcRepaymentLimitationLessThan200PercentFplSingle">
+      <Description>Repayment limitation based on lt 200% FPL (federal poverty limit) and single
+        Rev Proc 2024-40 § 36B(f)(2)(B)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>375</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/ptcRepaymentLimitationLessThan200PercentFplOther">
       <Description>Repayment limitation lt 200% FPL and not signle Rev Proc .07 Refundable Credit for Coverage Under a
         Qualified Health Plan § 36B(f)(2)(B)</Description>
       <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>750</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/ptcRepaymentLimitationLessThan200PercentFplOther">
+      <Description>Repayment limitation lt 200% FPL and not single
+        Rev Proc 2024-40 § 36B(f)(2)(B)</Description>
+      <TaxYear>2025</TaxYear>
       <Derived>
         <Dollar>750</Dollar>
       </Derived>
@@ -9383,12 +9469,30 @@
       </Derived>
     </Fact>
 
+    <Fact path="/ptcRepaymentLimitationLessThan300PercentFplSingle">
+      <Description>Repayment limitation based on lt 300% FPL and single
+        Rev Proc 2024-40 § 36B(f)(2)(B)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>975</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/ptcRepaymentLimitationLessThan300PercentFplOther">
       <Description>Repayment limitation lt 300% FPL and not signle Rev Proc .07 Refundable Credit for Coverage Under a
         Qualified Health Plan § 36B(f)(2)(B)</Description>
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>1900</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/ptcRepaymentLimitationLessThan300PercentFplOther">
+      <Description>Repayment limitation lt 300% FPL and not single
+        Rev Proc 2024-40 § 36B(f)(2)(B)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>1950</Dollar>
       </Derived>
     </Fact>
 
@@ -9401,12 +9505,30 @@
       </Derived>
     </Fact>
 
+    <Fact path="/ptcRepaymentLimitationLessThan400PercentFplSingle">
+      <Description>Repayment limitation based on lt 400% FPL and single
+        Rev Proc 2024-40 § 36B(f)(2)(B)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>1625</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/ptcRepaymentLimitationLessThan400PercentFplOther">
       <Description>Repayment limitation lt 400% FPL and not signle Rev Proc .07 Refundable Credit for Coverage Under a
         Qualified Health Plan § 36B(f)(2)(B)</Description>
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>3150</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/ptcRepaymentLimitationLessThan400PercentFplOther">
+      <Description>Repayment limitation lt 400% FPL and not single
+        Rev Proc 2024-40 § 36B(f)(2)(B)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>3250</Dollar>
       </Derived>
     </Fact>
 

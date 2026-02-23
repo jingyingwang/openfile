@@ -199,6 +199,16 @@
       </Derived>
     </Fact>
 
+    <Fact path="/maxCtcAmount">
+      <Name>Maximum child tax credit amount</Name>
+      <Description>The maximum child tax credit per child. OBBBA increased from $2,000 to $2,500.</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>2500</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/odcEligibleDependents">
       <Name>Number of ODC-eligible dependents</Name>
       <Description>The number of dependents who are eligible for the Credit for Other Dependents.
@@ -294,6 +304,16 @@
       </Derived>
     </Fact>
 
+    <Fact path="/maxOdcAmount">
+      <Name>Maximum credit amount for other dependents</Name>
+      <Description>The maximum credit for other dependents, per dependent</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>500</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/totalPotentialDependentCredits">
       <Name>Total potential dependent credits</Name>
       <Description>The combined amount of the maximum Child Tax Credit and Credit for Other
@@ -318,6 +338,38 @@
         8812.</Description>
       <Export mef="true" />
       <TaxYear>2024</TaxYear>
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+            </When>
+            <Then>
+              <Dollar>400000</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Not>
+                <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+              </Not>
+            </When>
+            <Then>
+              <Dollar>200000</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/dependentCreditPhaseoutThreshold">
+      <Name>Dependent credit phaseout threshold</Name>
+      <Description>The MAGI threshold at which the dependent credits begin to phaseout. Reported on
+        line 9 of Schedule
+        8812.</Description>
+      <Export mef="true" />
+      <TaxYear>2025</TaxYear>
 
       <Derived>
         <Switch>
@@ -828,6 +880,18 @@
       </Derived>
     </Fact>
 
+    <Fact path="/maxActcAmount">
+      <Name>Maximum additional child tax credit amount</Name>
+      <Description>The maximum additional tax credit per child
+        Rev Proc 2024-40 Child Tax Credit §24(d)(1)(A)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>1700</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/remainingPotentialActc">
       <Name>Remaining potential additional CTC</Name>
       <Description>The remaining amount of the Additional Child Tax Credit that could be claimed
@@ -872,6 +936,18 @@
         refundable additional child
         tax credit.</Description>
       <TaxYear>2024</TaxYear>
+
+      <Derived>
+        <Dollar>2500</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/actcRefundabilityThreshold">
+      <Name>Additional CTC refundability threshold</Name>
+      <Description>The amount of earned income that must be exceeded in order to receive the
+        refundable additional child
+        tax credit.</Description>
+      <TaxYear>2025</TaxYear>
 
       <Derived>
         <Dollar>2500</Dollar>
@@ -1148,6 +1224,60 @@
       <Name>Continue Schedule 8812 from Line 20</Name>
       <Description>Whether to continue in sequence from Line 20.</Description>
       <TaxYear>2024</TaxYear>
+      <!-- Note there is logic for PR residents not reflected here as it is out of scope. -->
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Not>
+                <GreaterThanOrEqual>
+                  <Left>
+                    <Dependency path="/pdf8812Line16bAmount" />
+                  </Left>
+                  <Right>
+                    <Multiply>
+                      <Int>3</Int>
+                      <Dependency path="/maxActcAmount" />
+                    </Multiply>
+                  </Right>
+                </GreaterThanOrEqual>
+              </Not>
+            </When>
+            <Then>
+              <False />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <GreaterThanOrEqual>
+                <Left>
+                  <Dependency path="/pdf8812Line20" />
+                </Left>
+                <Right>
+                  <Dependency path="/pdf8812Line17" />
+                </Right>
+              </GreaterThanOrEqual>
+            </When>
+            <Then>
+              <False />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <True />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/pdf8812ContinueFromLine20">
+      <Name>Continue Schedule 8812 from Line 20</Name>
+      <Description>Whether to continue in sequence from Line 20.</Description>
+      <TaxYear>2025</TaxYear>
       <!-- Note there is logic for PR residents not reflected here as it is out of scope. -->
       <Derived>
         <Switch>

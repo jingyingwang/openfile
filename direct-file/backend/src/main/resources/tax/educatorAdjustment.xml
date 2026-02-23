@@ -110,6 +110,16 @@
       </Derived>
     </Fact>
 
+    <Fact path="/maxIndividualEducatorExpensesLimit">
+      <Name>Maximum Deduction for educator expenses</Name>
+      <Description>The maximum deduction an individual can take for educator expense</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>300</Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/primaryEducatorExpensesWritable">
       <Name>Primary educator expenses writable</Name>
       <Description>Expenses the TP spent as a k12 educator. May deduct up to the maxIndividualEducatorExpensesLimit.</Description>
@@ -121,6 +131,19 @@
           <!-- We'll want to update this reference to maxIndividualEducatorExpensesLimit so we don't
           need to update this manually for every tax year. Additional info in ticket:
           https://git.irslabs.org/irslabs-prototypes/direct-file/-/issues/3405 -->
+          <Dollar>300</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/primaryEducatorExpensesWritable">
+      <Name>Primary educator expenses writable</Name>
+      <Description>Expenses the TP spent as a k12 educator. May deduct up to the maxIndividualEducatorExpensesLimit.</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Writable>
+        <Dollar />
+        <Limit type="Max">
           <Dollar>300</Dollar>
         </Limit>
       </Writable>
@@ -167,6 +190,19 @@
           <!-- We'll want to update this reference to maxIndividualEducatorExpensesLimit so we don't
           need to update this manually for every tax year. Additional info in ticket:
           https://git.irslabs.org/irslabs-prototypes/direct-file/-/issues/3405 -->
+          <Dollar>300</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/secondaryEducatorExpensesWritable">
+      <Name>Secondary educator expenses writable</Name>
+      <Description>Expenses the TP spent as a k12 educator. May deduct up to the maxIndividualEducatorExpensesLimit.</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Writable>
+        <Dollar />
+        <Limit type="Max">
           <Dollar>300</Dollar>
         </Limit>
       </Writable>
