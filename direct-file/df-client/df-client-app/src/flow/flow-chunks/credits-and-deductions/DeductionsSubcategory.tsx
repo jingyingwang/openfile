@@ -456,10 +456,7 @@ export const DeductionsSubcategory = (
           <SaveAndOrContinueButton />
         </Screen>
         <Gate condition='/flowShowCarLoanInterestAmount'>
-          <Screen
-            route='car-loan-interest-amount-secondary'
-            condition='/isFilingStatusMFJ'
-          >
+          <Screen route='car-loan-interest-amount-secondary' condition='/isFilingStatusMFJ'>
             <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/car-loan-interest-context' />
             <Heading i18nKey='/heading/credits-and-deductions/car-loan-interest-amount-spouse' />
             <Dollar path='/carLoanInterestAmountSecondary' />
@@ -534,10 +531,7 @@ export const DeductionsSubcategory = (
           <SaveAndOrContinueButton />
         </Screen>
         <Gate condition='/flowShowBonusDepreciationSection'>
-          <Screen
-            route='bonus-depreciation-amount'
-            condition='/hasQualifyingBonusDepreciation'
-          >
+          <Screen route='bonus-depreciation-amount' condition='/hasQualifyingBonusDepreciation'>
             <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/bonus-depreciation-context' />
             <Heading i18nKey='/heading/credits-and-deductions/bonus-depreciation-amount' />
             <InfoDisplay i18nKey='/info/credits-and-deductions/bonus-depreciation-amount-details' />
