@@ -404,7 +404,10 @@ export const DeductionsSubcategory = (
     </Gate>
 
     <SubSubcategory route='deduction-choice'>
-      <Screen route='deduction-type-choice' condition={{ operator: `isFalseOrIncomplete`, condition: `/isMFJDependent` }}>
+      <Screen
+        route='deduction-type-choice'
+        condition={{ operator: `isFalseOrIncomplete`, condition: `/isMFJDependent` }}
+      >
         <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/deduction-choice-context' />
         <Heading i18nKey='/heading/credits-and-deductions/deduction-choice' />
         <InfoDisplay i18nKey='/info/credits-and-deductions/deduction-choice-details' />

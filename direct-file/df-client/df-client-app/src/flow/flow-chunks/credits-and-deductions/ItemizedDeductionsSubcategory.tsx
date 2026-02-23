@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 import { Gate, Screen, SubSubcategory } from '../../flowDeclarations.js';
 import {
-  Boolean,
   Dollar,
   Heading,
   InfoDisplay,
@@ -14,7 +13,6 @@ import {
 export const ItemizedDeductionsSubSubcategory = (
   <Gate condition={{ operator: `isFalse`, condition: `/wantsStandardDeduction` }}>
     <SubSubcategory route='itemized-deductions'>
-
       {/* ─── Medical and Dental Expenses ─── */}
       <Screen route='medical-expenses'>
         <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/itemized-deductions-context' />
@@ -121,7 +119,6 @@ export const ItemizedDeductionsSubSubcategory = (
         />
         <SaveAndOrContinueButton />
       </Screen>
-
     </SubSubcategory>
   </Gate>
 );
