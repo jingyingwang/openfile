@@ -202,24 +202,26 @@
       </Writable>
     </Fact>
 
-    <!-- Derived: holding period (short-term = held 1 year or less) -->
+    <!-- Holding period classification: user selects short-term vs long-term.
+         On Form 8949, Part I = short-term, Part II = long-term. The user knows
+         from their 1099-B which category applies. -->
+    <Fact path="/form8949Transactions/*/writableIsShortTerm">
+      <Name>Is short-term (user-entered)</Name>
+      <Description>Whether the asset was held for one year or less (short-term capital gain/loss).
+        The user selects this based on their 1099-B or holding period knowledge.</Description>
+
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
     <Fact path="/form8949Transactions/*/isShortTerm">
       <Name>Is short-term</Name>
       <Description>Whether the asset was held for one year or less (short-term capital gain/loss).</Description>
       <Export downstreamFacts="true" mef="true" />
 
       <Derived>
-        <DayDifferenceLessThanOrEqual>
-          <Start>
-            <Dependency path="../dateAcquired" />
-          </Start>
-          <End>
-            <Dependency path="../dateSold" />
-          </End>
-          <Days>
-            <Int>365</Int>
-          </Days>
-        </DayDifferenceLessThanOrEqual>
+        <Dependency path="../writableIsShortTerm" />
       </Derived>
     </Fact>
 
@@ -282,6 +284,9 @@
           </IsComplete>
           <IsComplete>
             <Dependency path="../costBasis" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="../writableIsShortTerm" />
           </IsComplete>
         </All>
       </Derived>

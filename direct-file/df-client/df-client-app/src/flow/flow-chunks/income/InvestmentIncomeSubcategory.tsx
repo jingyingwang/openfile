@@ -13,7 +13,7 @@ import {
   InfoDisplay,
   SaveAndOrContinueButton,
   SetFactAction,
-  DateInput,
+  DatePicker,
   LimitingString,
 } from '../../ContentDeclarations.js';
 
@@ -157,8 +157,8 @@ export const InvestmentIncomeSubcategory = (
         <Screen route='transaction-dates'>
           <Heading i18nKey='/heading/income/investment/transaction-dates' />
           <InfoDisplay i18nKey='/info/income/investment/transaction-dates' />
-          <DateInput path='/form8949Transactions/*/dateAcquired' />
-          <DateInput path='/form8949Transactions/*/dateSold' />
+          <DatePicker path='/form8949Transactions/*/dateAcquired' />
+          <DatePicker path='/form8949Transactions/*/dateSold' />
           <SaveAndOrContinueButton />
         </Screen>
         <Screen route='transaction-amounts'>
@@ -166,6 +166,16 @@ export const InvestmentIncomeSubcategory = (
           <InfoDisplay i18nKey='/info/income/investment/transaction-amounts' />
           <Dollar path='/form8949Transactions/*/proceeds' />
           <Dollar path='/form8949Transactions/*/costBasis' />
+          <SaveAndOrContinueButton />
+        </Screen>
+      </SubSubcategory>
+
+      <SubSubcategory route='transaction-holding-period'>
+        <Screen route='transaction-holding-period'>
+          <Heading i18nKey='/heading/income/investment/transaction-holding-period' />
+          <InfoDisplay i18nKey='/info/income/investment/transaction-holding-period' />
+          <DFModal i18nKey='/info/income/investment/what-is-short-term-vs-long-term' />
+          <Boolean path='/form8949Transactions/*/writableIsShortTerm' />
           <SaveAndOrContinueButton />
         </Screen>
       </SubSubcategory>

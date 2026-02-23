@@ -829,7 +829,125 @@
                 </Switch>
               </Then>
             </Case>
-            <!-- Single / MFS brackets on ordinary income (same brackets) -->
+            <!-- MFS brackets on ordinary income (TY2024) -->
+            <Case>
+              <When>
+                <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+              </When>
+              <Then>
+                <Switch>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>11600</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Multiply><Rational>10/100</Rational><Dependency path="/qdcgOrdinaryIncome" /></Multiply>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>47150</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>1160</Dollar>
+                        <Multiply><Rational>12/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>11600</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>100525</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>5426</Dollar>
+                        <Multiply><Rational>22/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>47150</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>191950</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>17168.50</Dollar>
+                        <Multiply><Rational>24/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>100525</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>243725</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>39110.50</Dollar>
+                        <Multiply><Rational>32/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>191950</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>365600</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>55678.50</Dollar>
+                        <Multiply><Rational>35/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>243725</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When><True /></When>
+                    <Then>
+                      <Add>
+                        <Dollar>98334.75</Dollar>
+                        <Multiply><Rational>37/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>365600</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                </Switch>
+              </Then>
+            </Case>
+            <!-- Single brackets on ordinary income (TY2024, catch-all) -->
             <Case>
               <When><True /></When>
               <Then>
