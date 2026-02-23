@@ -455,15 +455,17 @@ export const DeductionsSubcategory = (
           <Dollar path='/carLoanInterestAmountPrimary' />
           <SaveAndOrContinueButton />
         </Screen>
-        <Screen
-          route='car-loan-interest-amount-secondary'
-          conditions={[`/flowShowCarLoanInterestAmount`, `/isFilingStatusMFJ`]}
-        >
-          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/car-loan-interest-context' />
-          <Heading i18nKey='/heading/credits-and-deductions/car-loan-interest-amount-spouse' />
-          <Dollar path='/carLoanInterestAmountSecondary' />
-          <SaveAndOrContinueButton />
-        </Screen>
+        <Gate condition='/flowShowCarLoanInterestAmount'>
+          <Screen
+            route='car-loan-interest-amount-secondary'
+            condition='/isFilingStatusMFJ'
+          >
+            <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/car-loan-interest-context' />
+            <Heading i18nKey='/heading/credits-and-deductions/car-loan-interest-amount-spouse' />
+            <Dollar path='/carLoanInterestAmountSecondary' />
+            <SaveAndOrContinueButton />
+          </Screen>
+        </Gate>
       </SubSubcategory>
     </Gate>
 
@@ -531,16 +533,18 @@ export const DeductionsSubcategory = (
           <Boolean path='/hasQualifyingBonusDepreciation' />
           <SaveAndOrContinueButton />
         </Screen>
-        <Screen
-          route='bonus-depreciation-amount'
-          conditions={[`/flowShowBonusDepreciationSection`, `/hasQualifyingBonusDepreciation`]}
-        >
-          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/bonus-depreciation-context' />
-          <Heading i18nKey='/heading/credits-and-deductions/bonus-depreciation-amount' />
-          <InfoDisplay i18nKey='/info/credits-and-deductions/bonus-depreciation-amount-details' />
-          <Dollar path='/bonusDepreciationAmount' />
-          <SaveAndOrContinueButton />
-        </Screen>
+        <Gate condition='/flowShowBonusDepreciationSection'>
+          <Screen
+            route='bonus-depreciation-amount'
+            condition='/hasQualifyingBonusDepreciation'
+          >
+            <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/bonus-depreciation-context' />
+            <Heading i18nKey='/heading/credits-and-deductions/bonus-depreciation-amount' />
+            <InfoDisplay i18nKey='/info/credits-and-deductions/bonus-depreciation-amount-details' />
+            <Dollar path='/bonusDepreciationAmount' />
+            <SaveAndOrContinueButton />
+          </Screen>
+        </Gate>
       </SubSubcategory>
     </Gate>
 
