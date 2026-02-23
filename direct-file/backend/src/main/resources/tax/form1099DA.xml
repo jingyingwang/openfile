@@ -1,0 +1,568 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         Form 1099-DA: Digital Asset Proceeds from Broker Transactions
+         NEW for TY2025 — broker reporting of digital asset sales.
+         Feeds into Form 8949 / Schedule D.
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <Fact path="/form1099DAs">
+      <Name>Form 1099-DA</Name>
+      <Description>Form 1099-DA: Digital Asset Proceeds from Broker Transactions</Description>
+      <Writable>
+        <Collection />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DAsIsDone">
+      <Name>Form 1099-DA section is done</Name>
+      <Description>The user has clicked "Done" for their Form 1099-DA section</Description>
+      <Export downstreamFacts="true" />
+      <Writable>
+        <Boolean />
+      </Writable>
+      <Placeholder>
+        <False />
+      </Placeholder>
+    </Fact>
+
+    <!-- ── Filer assignment ─────────────────────────────────────── -->
+
+    <Fact path="/form1099DAs/*/filer">
+      <Name>Recipient</Name>
+      <Description>The taxpayer who sold/disposed of the digital asset.</Description>
+      <Writable>
+        <CollectionItem collection="/filers" />
+      </Writable>
+      <Placeholder>
+        <Dependency module="filers" path="/primaryFiler" />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/belongsToPrimaryFiler">
+      <Description>Whether the 1099-DA belongs to the primary filer</Description>
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/primaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/belongsToSecondaryFiler">
+      <Description>Whether the 1099-DA belongs to the secondary filer</Description>
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/secondaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has forms when primary filer is not filing jointly</Description>
+      <Derived>
+        <All>
+          <Not>
+            <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+          </Not>
+          <Dependency path="../belongsToSecondaryFiler" />
+        </All>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DAs/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has forms when primary filer is not filing jointly</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <Dependency path="/form1099DAs/*/secondaryFilerUsedWithoutMFJ" />
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ── Broker / Exchange info ───────────────────────────────── -->
+
+    <Fact path="/form1099DAs/*/brokerName">
+      <Name>Broker or exchange name</Name>
+      <Description>The name of the broker or digital asset exchange that filed the 1099-DA.</Description>
+      <Export mef="true" />
+      <Writable>
+        <String />
+        <Limit type="Match">
+          <String><![CDATA[(([A-Za-z0-9#\-\(\)]|&|')\s?)*([A-Za-z0-9#\-\(\)]|&|')]]></String>
+        </Limit>
+        <Limit type="MaxLength">
+          <Int>75</Int>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/brokerName/tin">
+      <Name>Broker TIN</Name>
+      <Description>The broker's TIN from the 1099-DA.</Description>
+      <Export mef="true" />
+      <Writable>
+        <EIN />
+      </Writable>
+    </Fact>
+
+    <!-- ── Digital asset description ────────────────────────────── -->
+
+    <Fact path="/form1099DAs/*/assetDescription">
+      <Name>Digital asset description</Name>
+      <Description>Description of the digital asset (e.g. "2.5 BTC", "100 ETH").</Description>
+      <Export mef="true" />
+      <Writable>
+        <String />
+        <Limit type="MaxLength">
+          <Int>100</Int>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <!-- ── Proceeds (Box 1d) ────────────────────────────────────── -->
+
+    <Fact path="/form1099DAs/*/writableProceeds">
+      <Name>Proceeds from digital asset sale</Name>
+      <Description>Box 1d on the 1099-DA: Proceeds from the sale or disposition.</Description>
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/proceeds">
+      <Name>Proceeds</Name>
+      <Description>Box 1d on the 1099-DA.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableProceeds" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableProceeds" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- ── Cost basis (Box 1e) ──────────────────────────────────── -->
+
+    <Fact path="/form1099DAs/*/writableCostBasis">
+      <Name>Cost basis of digital asset</Name>
+      <Description>Box 1e on the 1099-DA: Cost or other basis of the asset.</Description>
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/costBasis">
+      <Name>Cost basis</Name>
+      <Description>Box 1e on the 1099-DA.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableCostBasis" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableCostBasis" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- ── Gain or loss ─────────────────────────────────────────── -->
+
+    <Fact path="/form1099DAs/*/gainOrLoss">
+      <Name>Gain or loss on digital asset</Name>
+      <Description>Computed gain or loss: proceeds minus cost basis. Feeds Form 8949.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Subtract>
+          <Minuend>
+            <Dependency path="../proceeds" />
+          </Minuend>
+          <Subtrahends>
+            <Dependency path="../costBasis" />
+          </Subtrahends>
+        </Subtract>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/roundedGainOrLoss">
+      <Description>Rounded gain or loss for reporting purposes.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Round>
+          <Dependency path="../gainOrLoss" />
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ── Federal income tax withheld (Box 4) ──────────────────── -->
+
+    <Fact path="/form1099DAs/*/writableFederalTaxWithheld">
+      <Name>(Writable) Federal income tax withheld</Name>
+      <Description>Box 4 on the 1099-DA: Federal income tax withheld.</Description>
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/federalTaxWithheld">
+      <Name>Federal income tax withheld</Name>
+      <Description>Box 4 on the 1099-DA.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <ExportZero />
+      <Derived>
+        <Round>
+          <Switch>
+            <Case>
+              <When>
+                <IsComplete>
+                  <Dependency path="../writableFederalTaxWithheld" />
+                </IsComplete>
+              </When>
+              <Then>
+                <Dependency path="../writableFederalTaxWithheld" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+          </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/hasFederalWithholding">
+      <Description>Whether the filer has federal tax withheld on this 1099-DA.</Description>
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Dependency path="../federalTaxWithheld" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ── Completeness ─────────────────────────────────────────── -->
+
+    <Fact path="/form1099DAs/*/hasSeenLastAvailableScreen">
+      <Name>Has seen last available screen</Name>
+      <Description>The user has gone through the entire flow of 1099-DA screens</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DAs/*/isComplete">
+      <Name>Is complete</Name>
+      <Description>Whether the 1099-DA entry is complete.</Description>
+      <Derived>
+        <All>
+          <IsComplete>
+            <Dependency path="../hasSeenLastAvailableScreen" />
+          </IsComplete>
+          <Dependency path="../hasSeenLastAvailableScreen" />
+          <IsComplete>
+            <Dependency path="../proceeds" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="../costBasis" />
+          </IsComplete>
+          <Any>
+            <Equal>
+              <Left>
+                <Dependency path="../federalTaxWithheld" />
+              </Left>
+              <Right>
+                <Dollar>0</Dollar>
+              </Right>
+            </Equal>
+            <IsComplete>
+              <Dependency path="../brokerName/tin" />
+            </IsComplete>
+          </Any>
+        </All>
+      </Derived>
+    </Fact>
+
+    <!-- ── Submission blocking ──────────────────────────────────── -->
+
+    <Fact path="/primaryFilerHasIncompleteForm1099DAs">
+      <Name>At least one of Primary Filer's 1099-DAs is incomplete</Name>
+      <Description>Whether at least one of Primary Filer's 1099-DAs is incomplete</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <All>
+                <Dependency path="/form1099DAs/*/belongsToPrimaryFiler" />
+                <Not>
+                  <Dependency path="/form1099DAs/*/isComplete" />
+                </Not>
+              </All>
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/secondaryFilerHasIncompleteForm1099DAs">
+      <Name>At least one of Secondary Filer's 1099-DAs is incomplete</Name>
+      <Description>Whether at least one of Secondary Filer's 1099-DAs is incomplete</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <All>
+                <Dependency path="/form1099DAs/*/belongsToSecondaryFiler" />
+                <Not>
+                  <Dependency path="/form1099DAs/*/isComplete" />
+                </Not>
+              </All>
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ── Aggregates ───────────────────────────────────────────── -->
+
+    <Fact path="/has1099DA">
+      <Name>Has 1099-DA</Name>
+      <Description>Whether the TP has any 1099-DA forms</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <CollectionSize>
+              <Dependency path="/form1099DAs" />
+            </CollectionSize>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DATotalProceeds">
+      <Name>Total 1099-DA proceeds</Name>
+      <Description>Total proceeds from all 1099-DA forms.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099DAs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099DAs/*/proceeds" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DATotalCostBasis">
+      <Name>Total 1099-DA cost basis</Name>
+      <Description>Total cost basis from all 1099-DA forms.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099DAs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099DAs/*/costBasis" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DATotalGainOrLoss">
+      <Name>Total 1099-DA gain or loss</Name>
+      <Description>Total gain or loss from all 1099-DA forms. Feeds into Form 8949 / Schedule D.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099DAs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099DAs/*/gainOrLoss" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DAFederalTaxWithheld">
+      <Name>Form 1099-DA federal tax withholdings</Name>
+      <Description>Total federal income tax withheld from Form 1099-DAs.</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099DAs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099DAs/*/federalTaxWithheld" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- ── Filtered collections ─────────────────────────────────── -->
+
+    <Fact path="/primaryFiler1099DAs">
+      <Description>1099-DA forms belonging to the primary filer</Description>
+      <Derived>
+        <Filter path="/form1099DAs">
+          <Dependency path="belongsToPrimaryFiler" />
+        </Filter>
+      </Derived>
+    </Fact>
+
+    <Fact path="/secondaryFiler1099DAs">
+      <Description>1099-DA forms belonging to the secondary filer</Description>
+      <Derived>
+        <Filter path="/form1099DAs">
+          <Dependency path="belongsToSecondaryFiler" />
+        </Filter>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>

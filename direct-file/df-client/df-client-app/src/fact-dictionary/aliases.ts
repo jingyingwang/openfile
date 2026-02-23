@@ -37,6 +37,8 @@ export const individualFilerAliases = [
   `/form1099Gs/*/filer/`,
   `/socialSecurityReports/*/filer/`,
   `/form1099Miscs/*/filer/`,
+  `/form1099Ks/*/filer/`,
+  `/form1099DAs/*/filer/`,
   `/form1099Rs/*/filer/`,
   `/hsaDistributions/*/filer/`,
   ...w2Slices.map((slice) => `${slice}filer/`),
@@ -88,6 +90,10 @@ export const interestReportsAliases = [
 ] as const;
 
 export const form1099MiscAliases = [`/alaskaPfd1099s/`] as const;
+
+export const form1099KAliases = [`/primaryFiler1099Ks/`, `/secondaryFiler1099Ks/`] as const;
+
+export const form1099DAAliases = [`/primaryFiler1099DAs/`, `/secondaryFiler1099DAs/`] as const;
 
 export const form1099RAliases = [
   `/fullyTaxable1099Rs/`,

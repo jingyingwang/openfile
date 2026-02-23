@@ -10164,6 +10164,60 @@ info:
                 <Link1>Encuentra otras maneras de presentar tus impuestos federales</Link1>.
           urls:
             Link1: https://www.irs.gov/es/filing/individuals/how-to-file
+  /info/income/1099K/secondary-filer-income-without-mfj:
+    alertText:
+      heading: Elimina el 1099-K de {{/secondaryFiler/firstName}} para continuar
+      body:
+        - p: >-
+            Cambiaste tu estado civil de Casado declarando en conjunto a {{/filingStatusCapitalized}}. Necesitas
+            eliminar el 1099-K de {{/secondaryFiler/firstName}} antes de continuar.
+  /info/income/1099K/add:
+    body: Aquí están los Formularios 1099-K que has agregado. Puedes agregar otro o continuar.
+  /info/income/1099K/what-is-1099k:
+    alertText:
+      heading: ¿Qué es un Formulario 1099-K?
+      body:
+        - p: >-
+            Un Formulario 1099-K reporta transacciones con tarjeta de pago y red de terceros. Puedes recibir
+            un 1099-K de aplicaciones de pago (como Venmo, PayPal o Cash App), mercados en línea o procesadores
+            de tarjetas de pago si tus transacciones cumplen ciertos umbrales.
+  /info/income/1099K/payer-name:
+    body: Este es el nombre de la entidad de liquidación de pagos (PSE) o plataforma de pago que aparece en el formulario.
+  /info/income/1099K/box-1a:
+    body: Esta es la cantidad bruta de todas las transacciones de pago reportables.
+  /info/income/1099K/box-4-can-be-blank:
+    body: Esta casilla puede estar en blanco en tu formulario. Si lo está, también puedes dejarla en blanco aquí.
+  /info/income/1099K/payer-tin:
+    body: Este es el número de identificación del contribuyente del declarante que aparece en el formulario.
+  /info/income/1099DA/secondary-filer-income-without-mfj:
+    alertText:
+      heading: Elimina el 1099-DA de {{/secondaryFiler/firstName}} para continuar
+      body:
+        - p: >-
+            Cambiaste tu estado civil de Casado declarando en conjunto a {{/filingStatusCapitalized}}. Necesitas
+            eliminar el 1099-DA de {{/secondaryFiler/firstName}} antes de continuar.
+  /info/income/1099DA/add:
+    body: Aquí están los Formularios 1099-DA que has agregado. Puedes agregar otro o continuar.
+  /info/income/1099DA/what-is-1099da:
+    alertText:
+      heading: ¿Qué es un Formulario 1099-DA?
+      body:
+        - p: >-
+            Un Formulario 1099-DA reporta ganancias de transacciones de activos digitales por parte de corredores.
+            A partir del año fiscal 2025, los corredores e intercambios de activos digitales están obligados a
+            reportar tus ventas y disposiciones de activos digitales (como criptomonedas) en este formulario.
+  /info/income/1099DA/broker-name:
+    body: Este es el nombre del corredor o intercambio que aparece en el formulario.
+  /info/income/1099DA/asset-description:
+    body: Describe el activo digital y la cantidad (por ejemplo, "2.5 BTC" o "100 ETH").
+  /info/income/1099DA/box-1d:
+    body: Estas son las ganancias totales de la venta o disposición del activo digital.
+  /info/income/1099DA/box-1e:
+    body: Este es el costo u otra base del activo digital.
+  /info/income/1099DA/box-4-can-be-blank:
+    body: Esta casilla puede estar en blanco en tu formulario. Si lo está, también puedes dejarla en blanco aquí.
+  /info/income/1099DA/broker-tin:
+    body: Este es el número de identificación del contribuyente del corredor que aparece en el formulario.
   /info/income/pfd/secondary-filer-income-without-mfj:
     alertText:
       heading: >-
@@ -19484,6 +19538,16 @@ checklist:
     dataItems:
       alaskaPfdTaxable: "Cantidad tributable: {{/alaskaPfdIncome}}"
       alaskaPfdNoneTaxable: Ninguno reportado
+  /flow/income/1099-k:
+    heading: Ingresos por tarjeta de pago/red de terceros (1099-K)
+    dataItems:
+      form1099KTaxable: "Cantidad bruta: {{/form1099KGrossIncome}}"
+      form1099KNoneTaxable: Ninguno reportado
+  /flow/income/1099-da:
+    heading: Ingresos por activos digitales (1099-DA)
+    dataItems:
+      form1099DATaxable: "Ganancia/pérdida total: {{/form1099DATotalGainOrLoss}}"
+      form1099DANoneTaxable: Ninguno reportado
   /flow/income/retirement:
     heading: Ingresos de jubiliación (Formulario 1099-R)
     dataItems:
@@ -21228,6 +21292,33 @@ headings:
   /heading/income/1099Misc/1099Misc-add-box-3: >-
     Escribe la cantidad que aparece en "otros ingresos" (other income) en la <strong>casilla 3</strong>.
   /heading/income/1099Misc/1099Misc-add-whose-pfd: ¿De quién es el Dividendo del Fondo Permanente de Alaska (PFD)?
+  /heading/income/1099K: Ingresos por tarjeta de pago y red de terceros (Formulario 1099-K)
+  /heading/income/1099K/intro: >-
+    En esta sección, preguntaremos sobre cualquier Formulario 1099-K que recibiste en el {{/taxYear}}. Un 1099-K reporta
+    pagos que recibiste a través de transacciones con tarjeta de pago o redes de terceros (por ejemplo,
+    aplicaciones como Venmo, PayPal o procesadores de pagos).
+  /heading/income/1099K/1099K-add-whose: ¿De quién es el Formulario 1099-K?
+  /heading/income/1099K/1099K-add-payer: Escribe el nombre del declarante del 1099-K.
+  /heading/income/1099K/1099K-add-box-1a: >-
+    Escribe la cantidad bruta de transacciones con tarjeta de pago/red de terceros en la <strong>casilla 1a</strong>.
+  /heading/income/1099K/1099K-add-box-4: >-
+    Escribe la retención del impuesto federal sobre los ingresos en la <strong>casilla 4</strong>.
+  /heading/income/1099K/1099K-add-payer-tin: Escribe el TIN del declarante del 1099-K.
+  /heading/income/1099DA: Ingresos por activos digitales (Formulario 1099-DA)
+  /heading/income/1099DA/intro: >-
+    En esta sección, preguntaremos sobre cualquier Formulario 1099-DA que recibiste en el {{/taxYear}}. Un 1099-DA reporta
+    ganancias de transacciones de activos digitales reportadas por tu corredor o intercambio. Esto incluye
+    ventas, intercambios u otras disposiciones de activos digitales como criptomonedas.
+  /heading/income/1099DA/1099DA-add-whose: ¿De quién es el Formulario 1099-DA?
+  /heading/income/1099DA/1099DA-add-broker: Escribe el nombre del corredor o intercambio del 1099-DA.
+  /heading/income/1099DA/1099DA-add-description: Describe la transacción de activos digitales.
+  /heading/income/1099DA/1099DA-add-proceeds: >-
+    Escribe las ganancias en la <strong>casilla 1d</strong>.
+  /heading/income/1099DA/1099DA-add-cost-basis: >-
+    Escribe el costo u otra base en la <strong>casilla 1e</strong>.
+  /heading/income/1099DA/1099DA-add-box-4: >-
+    Escribe la retención del impuesto federal sobre los ingresos en la <strong>casilla 4</strong>.
+  /heading/income/1099DA/1099DA-add-broker-tin: Escribe el TIN del corredor del 1099-DA.
   /heading/income/alaska-pfd: Dividendo del Fondo Permanente de Alaska (PFD)
   /heading/income/alaska-pfd/intro:
     helpText:
@@ -24341,6 +24432,24 @@ dataviews:
   /flow/income/1099Misc:
     has1099Misc: Tu PFD
     secondaryFiler1099Misc: El PFD de tu cónyuge
+  /flow/income/1099K:
+    /form1099Ks/*/payer: Declarante (PSE/plataforma)
+    /form1099Ks/*/writableGrossAmount: Casilla 1a - Cantidad bruta
+    /form1099Ks/*/writableFederalTaxWithheld: Casilla 4 - Retención del impuesto federal
+    /form1099Ks/*/payer/tin: TIN del declarante
+    /form1099Ks/*/filer/firstName: ¿De quién es el 1099-K?
+    primaryFiler1099K: Tu 1099-K
+    secondaryFiler1099K: El 1099-K de tu cónyuge
+  /flow/income/1099DA:
+    /form1099DAs/*/brokerName: Corredor o intercambio
+    /form1099DAs/*/assetDescription: Descripción del activo digital
+    /form1099DAs/*/writableProceeds: Casilla 1d - Ganancias
+    /form1099DAs/*/writableCostBasis: Casilla 1e - Base del costo
+    /form1099DAs/*/writableFederalTaxWithheld: Casilla 4 - Retención del impuesto federal
+    /form1099DAs/*/brokerName/tin: TIN del corredor
+    /form1099DAs/*/filer/firstName: ¿De quién es el 1099-DA?
+    primaryFiler1099DA: Tu 1099-DA
+    secondaryFiler1099DA: El 1099-DA de tu cónyuge
   /flow/income/hsa/distributions:
     heading: Distribuciones HSA
     primaryFiler: Tus Formularios 1099-SA

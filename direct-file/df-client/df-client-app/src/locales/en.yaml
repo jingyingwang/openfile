@@ -830,6 +830,7 @@ headings:
   /heading/income/1099Misc/1099Misc-add-whose-pfd: Whose Alaska Permanent Fund Dividend (PFD) is it?
   /heading/income/1099Misc/1099Misc-add-box-3: Enter the amount listed in other income in <strong>box 3</strong>.
   /heading/income/1099Misc/1099Misc-add-box-4: Enter the federal income tax withheld in <strong>box 4</strong>.
+
   /heading/income/self-employment: Self-employment income
   /heading/income/self-employment/gateway: Did you have any freelance, gig, or self-employment income?
   /heading/income/self-employment/gateway-mfj: Did you or your spouse have any freelance, gig, or self-employment income?
@@ -859,6 +860,29 @@ headings:
   /heading/income/self-employment/meals: How much did you spend on deductible meals?
   /heading/income/self-employment/utilities: How much did you spend on utilities?
   /heading/income/self-employment/other-expenses: Did you have any other business expenses?
+  /heading/income/1099K: Payment card and third party network income (Form 1099-K)
+  /heading/income/1099K/intro: >-
+    In this section, we'll ask about any Form 1099-K you received in {{/taxYear}}. A 1099-K reports
+    payments you received through payment card transactions or third party network transactions
+    (for example, from apps like Venmo, PayPal, or payment processors).
+  /heading/income/1099K/1099K-add-whose: Whose Form 1099-K is it?
+  /heading/income/1099K/1099K-add-payer: Enter the filer's name from the 1099-K.
+  /heading/income/1099K/1099K-add-box-1a: Enter the gross amount of payment card/third party network transactions in <strong>box 1a</strong>.
+  /heading/income/1099K/1099K-add-box-4: Enter the federal income tax withheld in <strong>box 4</strong>.
+  /heading/income/1099K/1099K-add-payer-tin: Enter the filer's TIN from the 1099-K.
+  /heading/income/1099DA: Digital asset income (Form 1099-DA)
+  /heading/income/1099DA/intro: >-
+    In this section, we'll ask about any Form 1099-DA you received in {{/taxYear}}. A 1099-DA reports
+    proceeds from digital asset transactions reported by your broker or exchange. This includes
+    sales, exchanges, or other dispositions of digital assets like cryptocurrency.
+  /heading/income/1099DA/1099DA-add-whose: Whose Form 1099-DA is it?
+  /heading/income/1099DA/1099DA-add-broker: Enter the broker or exchange name from the 1099-DA.
+  /heading/income/1099DA/1099DA-add-description: Describe the digital asset transaction.
+  /heading/income/1099DA/1099DA-add-proceeds: Enter the proceeds in <strong>box 1d</strong>.
+  /heading/income/1099DA/1099DA-add-cost-basis: Enter the cost or other basis in <strong>box 1e</strong>.
+  /heading/income/1099DA/1099DA-add-box-4: Enter the federal income tax withheld in <strong>box 4</strong>.
+  /heading/income/1099DA/1099DA-add-broker-tin: Enter the broker's TIN from the 1099-DA.
+
   /heading/income/interest: Interest income
   /heading/income/interest/intro:
     helpText:
@@ -5349,6 +5373,60 @@ info:
       - p:
           These codes are related to the Railroad Retirement Tax Act (RRTA) for railroad industry employees. They
           usually won’t be abbreviated.
+  /info/income/1099K/secondary-filer-income-without-mfj:
+    alertText:
+      heading: Remove {{/secondaryFiler/firstName}}'s 1099-K to continue
+      body:
+        - p: >-
+            You changed your filing status from Married Filing Jointly to {{/filingStatusCapitalized}}. You need to
+            remove {{/secondaryFiler/firstName}}'s 1099-K before you can continue.
+  /info/income/1099K/add:
+    body: Here are the Forms 1099-K you've added. You can add another or continue.
+  /info/income/1099K/what-is-1099k:
+    alertText:
+      heading: What is a Form 1099-K?
+      body:
+        - p: >-
+            A Form 1099-K reports payment card and third party network transactions. You may receive a 1099-K
+            from payment apps (like Venmo, PayPal, or Cash App), online marketplaces, or payment card processors
+            if your transactions meet certain thresholds.
+  /info/income/1099K/payer-name:
+    body: This is the name of the payment settlement entity (PSE) or payment platform shown on the form.
+  /info/income/1099K/box-1a:
+    body: This is the gross amount of all reportable payment transactions.
+  /info/income/1099K/box-4-can-be-blank:
+    body: This box may be blank on your form. If it is, you can leave it blank here too.
+  /info/income/1099K/payer-tin:
+    body: This is the taxpayer identification number of the filer shown on the form.
+  /info/income/1099DA/secondary-filer-income-without-mfj:
+    alertText:
+      heading: Remove {{/secondaryFiler/firstName}}'s 1099-DA to continue
+      body:
+        - p: >-
+            You changed your filing status from Married Filing Jointly to {{/filingStatusCapitalized}}. You need to
+            remove {{/secondaryFiler/firstName}}'s 1099-DA before you can continue.
+  /info/income/1099DA/add:
+    body: Here are the Forms 1099-DA you've added. You can add another or continue.
+  /info/income/1099DA/what-is-1099da:
+    alertText:
+      heading: What is a Form 1099-DA?
+      body:
+        - p: >-
+            A Form 1099-DA reports digital asset proceeds from broker transactions. Starting in tax year 2025,
+            brokers and digital asset exchanges are required to report your sales and dispositions of digital
+            assets (such as cryptocurrency) on this form.
+  /info/income/1099DA/broker-name:
+    body: This is the name of the broker or exchange shown on the form.
+  /info/income/1099DA/asset-description:
+    body: Describe the digital asset and quantity (for example, "2.5 BTC" or "100 ETH").
+  /info/income/1099DA/box-1d:
+    body: This is the total proceeds from the sale or disposition of the digital asset.
+  /info/income/1099DA/box-1e:
+    body: This is the cost or other basis of the digital asset.
+  /info/income/1099DA/box-4-can-be-blank:
+    body: This box may be blank on your form. If it is, you can leave it blank here too.
+  /info/income/1099DA/broker-tin:
+    body: This is the taxpayer identification number of the broker shown on the form.
   /info/income/pfd/secondary-filer-income-without-mfj:
     alertText:
       heading: Remove {{/secondaryFiler/firstName}}’s 1099-MISC to continue
@@ -20417,6 +20495,16 @@ checklist:
     dataItems:
       alaskaPfdTaxable: "Taxable amount: {{/alaskaPfdIncome}}"
       alaskaPfdNoneTaxable: "None reported"
+  /flow/income/1099-k:
+    heading: Payment card/third party income (1099-K)
+    dataItems:
+      form1099KTaxable: "Gross amount: {{/form1099KGrossIncome}}"
+      form1099KNoneTaxable: "None reported"
+  /flow/income/1099-da:
+    heading: Digital asset income (1099-DA)
+    dataItems:
+      form1099DATaxable: "Total gain/loss: {{/form1099DATotalGainOrLoss}}"
+      form1099DANoneTaxable: "None reported"
   /flow/income/jobs:
     heading: Jobs
     dataItems:
@@ -23679,6 +23767,24 @@ dataviews:
   /flow/income/1099Misc:
     has1099Misc: Your PFD
     secondaryFiler1099Misc: Your spouse’s PFD
+  /flow/income/1099K:
+    /form1099Ks/*/payer: Filer (PSE/platform)
+    /form1099Ks/*/writableGrossAmount: Box 1a - Gross amount
+    /form1099Ks/*/writableFederalTaxWithheld: Box 4 - Federal income tax withheld
+    /form1099Ks/*/payer/tin: Filer’s TIN
+    /form1099Ks/*/filer/firstName: Whose 1099-K is it?
+    primaryFiler1099K: Your 1099-K
+    secondaryFiler1099K: Your spouse’s 1099-K
+  /flow/income/1099DA:
+    /form1099DAs/*/brokerName: Broker or exchange
+    /form1099DAs/*/assetDescription: Digital asset description
+    /form1099DAs/*/writableProceeds: Box 1d - Proceeds
+    /form1099DAs/*/writableCostBasis: Box 1e - Cost basis
+    /form1099DAs/*/writableFederalTaxWithheld: Box 4 - Federal income tax withheld
+    /form1099DAs/*/brokerName/tin: Broker’s TIN
+    /form1099DAs/*/filer/firstName: Whose 1099-DA is it?
+    primaryFiler1099DA: Your 1099-DA
+    secondaryFiler1099DA: Your spouse’s 1099-DA
   /flow/income/jobs:
     noFactSelectSelections: Any codes listed?
     /formW2s/*/filer/firstName: W-2 for

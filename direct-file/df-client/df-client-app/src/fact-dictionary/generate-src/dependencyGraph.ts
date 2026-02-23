@@ -6,6 +6,8 @@ import {
   filerCollectionAliases,
   individualDependentAliases,
   form1099MiscAliases,
+  form1099KAliases,
+  form1099DAAliases,
   form1099RAliases,
   w2Aliases,
   individualW2Aliases,
@@ -132,6 +134,10 @@ export function unmapFactAlias(path: string): Path {
     return `/form1099Gs/*/${path.split(`/*/`).slice(-1)}` as Path;
   } else if (belongsToAlias(path, form1099MiscAliases)) {
     return `/form1099Miscs/*/${path.split(`/*/`).slice(-1)}` as Path;
+  } else if (belongsToAlias(path, form1099KAliases)) {
+    return `/form1099Ks/*/${path.split(`/*/`).slice(-1)}` as Path;
+  } else if (belongsToAlias(path, form1099DAAliases)) {
+    return `/form1099DAs/*/${path.split(`/*/`).slice(-1)}` as Path;
   } else if (belongsToAlias(path, form1099RAliases)) {
     return `/form1099Rs/*/${path.split(`/*/`).slice(-1)}` as Path;
   } else if (belongsToAlias(path, interestReportsAliases)) {

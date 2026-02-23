@@ -1,0 +1,433 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         Form 1099-K: Payment Card and Third Party Network Transactions
+         TY2025 threshold: $20,000 gross / 200 transactions
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <Fact path="/form1099Ks">
+      <Name>Form 1099-K</Name>
+      <Description>Form 1099-K: Payment Card and Third Party Network Transactions</Description>
+      <Writable>
+        <Collection />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099KsIsDone">
+      <Name>Form 1099-K section is done</Name>
+      <Description>The user has clicked "Done" for their Form 1099-K section</Description>
+      <Export downstreamFacts="true" />
+      <Writable>
+        <Boolean />
+      </Writable>
+      <Placeholder>
+        <False />
+      </Placeholder>
+    </Fact>
+
+    <!-- ── Filer assignment ─────────────────────────────────────── -->
+
+    <Fact path="/form1099Ks/*/filer">
+      <Name>Recipient</Name>
+      <Description>The recipient (payee) of the 1099-K.</Description>
+      <Writable>
+        <CollectionItem collection="/filers" />
+      </Writable>
+      <Placeholder>
+        <Dependency module="filers" path="/primaryFiler" />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/belongsToPrimaryFiler">
+      <Description>Whether the 1099-K belongs to the primary filer</Description>
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/primaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/belongsToSecondaryFiler">
+      <Description>Whether the 1099-K belongs to the secondary filer</Description>
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/secondaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has forms when primary filer is not filing jointly</Description>
+      <Derived>
+        <All>
+          <Not>
+            <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+          </Not>
+          <Dependency path="../belongsToSecondaryFiler" />
+        </All>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099Ks/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has forms when primary filer is not filing jointly</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <Dependency path="/form1099Ks/*/secondaryFilerUsedWithoutMFJ" />
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ── Payer info ───────────────────────────────────────────── -->
+
+    <Fact path="/form1099Ks/*/payer">
+      <Name>Filer (PSE or payment platform)</Name>
+      <Description>The name of the Payment Settlement Entity or electronic payment facilitator that filed the 1099-K.</Description>
+      <Export mef="true" />
+      <Writable>
+        <String />
+        <Limit type="Match">
+          <String><![CDATA[(([A-Za-z0-9#\-\(\)]|&|')\s?)*([A-Za-z0-9#\-\(\)]|&|')]]></String>
+        </Limit>
+        <Limit type="MaxLength">
+          <Int>75</Int>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/payer/tin">
+      <Name>Payer TIN</Name>
+      <Description>The payer's TIN from the 1099-K.</Description>
+      <Export mef="true" />
+      <Writable>
+        <EIN />
+      </Writable>
+    </Fact>
+
+    <!-- ── Box 1a: Gross amount ─────────────────────────────────── -->
+
+    <Fact path="/form1099Ks/*/writableGrossAmount">
+      <Name>Gross amount of payment card/third party network transactions</Name>
+      <Description>Box 1a on the 1099-K: Gross amount of all reportable payment transactions.</Description>
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/grossAmount">
+      <Name>Gross amount</Name>
+      <Description>Box 1a on the 1099-K.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableGrossAmount" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableGrossAmount" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- ── Box 4: Federal income tax withheld ──────────────────── -->
+
+    <Fact path="/form1099Ks/*/writableFederalTaxWithheld">
+      <Name>(Writable) Federal income tax withheld</Name>
+      <Description>Box 4 on the 1099-K: Federal income tax withheld.</Description>
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/federalTaxWithheld">
+      <Name>Federal income tax withheld</Name>
+      <Description>Box 4 on the 1099-K.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <ExportZero />
+      <Derived>
+        <Round>
+          <Switch>
+            <Case>
+              <When>
+                <IsComplete>
+                  <Dependency path="../writableFederalTaxWithheld" />
+                </IsComplete>
+              </When>
+              <Then>
+                <Dependency path="../writableFederalTaxWithheld" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+          </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/hasFederalWithholding">
+      <Description>Whether the filer has federal tax withheld on this 1099-K.</Description>
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Dependency path="../federalTaxWithheld" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ── Completeness ─────────────────────────────────────────── -->
+
+    <Fact path="/form1099Ks/*/hasSeenLastAvailableScreen">
+      <Name>Has seen last available screen</Name>
+      <Description>The user has gone through the entire flow of 1099-K screens</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099Ks/*/isComplete">
+      <Name>Is complete</Name>
+      <Description>Whether the 1099-K entry is complete.</Description>
+      <Derived>
+        <All>
+          <IsComplete>
+            <Dependency path="../hasSeenLastAvailableScreen" />
+          </IsComplete>
+          <Dependency path="../hasSeenLastAvailableScreen" />
+          <IsComplete>
+            <Dependency path="../grossAmount" />
+          </IsComplete>
+          <Any>
+            <!-- Either withholding is 0, or we collect a payer TIN -->
+            <Equal>
+              <Left>
+                <Dependency path="../federalTaxWithheld" />
+              </Left>
+              <Right>
+                <Dollar>0</Dollar>
+              </Right>
+            </Equal>
+            <IsComplete>
+              <Dependency path="../payer/tin" />
+            </IsComplete>
+          </Any>
+        </All>
+      </Derived>
+    </Fact>
+
+    <!-- ── Submission blocking ──────────────────────────────────── -->
+
+    <Fact path="/primaryFilerHasIncompleteForm1099Ks">
+      <Name>At least one of Primary Filer's 1099-Ks is incomplete</Name>
+      <Description>Whether at least one of Primary Filer's 1099-Ks is incomplete</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <All>
+                <Dependency path="/form1099Ks/*/belongsToPrimaryFiler" />
+                <Not>
+                  <Dependency path="/form1099Ks/*/isComplete" />
+                </Not>
+              </All>
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/secondaryFilerHasIncompleteForm1099Ks">
+      <Name>At least one of Secondary Filer's 1099-Ks is incomplete</Name>
+      <Description>Whether at least one of Secondary Filer's 1099-Ks is incomplete</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <All>
+                <Dependency path="/form1099Ks/*/belongsToSecondaryFiler" />
+                <Not>
+                  <Dependency path="/form1099Ks/*/isComplete" />
+                </Not>
+              </All>
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ── Aggregates ───────────────────────────────────────────── -->
+
+    <Fact path="/has1099K">
+      <Name>Has 1099-K</Name>
+      <Description>Whether the TP has any 1099-K forms</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <CollectionSize>
+              <Dependency path="/form1099Ks" />
+            </CollectionSize>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099KGrossIncome">
+      <Name>Total 1099-K gross income</Name>
+      <Description>Total gross amount from all 1099-K forms, reported as other income.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099Ks" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099Ks/*/grossAmount" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/has1099KIncome">
+      <Name>Has 1099-K income</Name>
+      <Description>1099-K gross income is greater than 0</Description>
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Dependency path="/form1099KGrossIncome" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099KFederalTaxWithheld">
+      <Name>Form 1099-K federal tax withholdings</Name>
+      <Description>Total federal income tax withheld from Form 1099-Ks.</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099Ks" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099Ks/*/federalTaxWithheld" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- ── Filtered collections ─────────────────────────────────── -->
+
+    <Fact path="/primaryFiler1099Ks">
+      <Description>1099-K forms belonging to the primary filer</Description>
+      <Derived>
+        <Filter path="/form1099Ks">
+          <Dependency path="belongsToPrimaryFiler" />
+        </Filter>
+      </Derived>
+    </Fact>
+
+    <Fact path="/secondaryFiler1099Ks">
+      <Description>1099-K forms belonging to the secondary filer</Description>
+      <Derived>
+        <Filter path="/form1099Ks">
+          <Dependency path="belongsToSecondaryFiler" />
+        </Filter>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>
