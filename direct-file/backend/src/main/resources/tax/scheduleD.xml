@@ -1,0 +1,220 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<!-- Schedule D: Capital Gains and Losses -->
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- Part I: Short-Term Capital Gains and Losses -->
+
+    <Fact path="/shortTermGainLoss">
+      <Name>Net short-term capital gain or loss</Name>
+      <Description>Schedule D, Part I total. Net short-term capital gain or loss from Form 8949 (line 7).</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Round>
+          <Dependency module="form8949" path="/shortTermGainLossFrom8949" />
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Part II: Long-Term Capital Gains and Losses -->
+
+    <Fact path="/longTermGainLossFrom8949Only">
+      <Name>Long-term gain/loss from Form 8949</Name>
+      <Description>Schedule D line 15: Long-term capital gain or loss from Form 8949 transactions only.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Round>
+          <Dependency module="form8949" path="/longTermGainLossFrom8949" />
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/capitalGainDistributions">
+      <Name>Capital gain distributions</Name>
+      <Description>Schedule D line 13: Capital gain distributions from 1099-DIV Box 2a.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Round>
+          <Dependency module="form1099DIV" path="/totalCapitalGainDistributions" />
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/longTermGainLoss">
+      <Name>Net long-term capital gain or loss</Name>
+      <Description>Schedule D, Part II total. Net long-term capital gain or loss (line 15).</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency path="/longTermGainLossFrom8949Only" />
+            <Dependency path="/capitalGainDistributions" />
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Part III: Summary -->
+
+    <Fact path="/netCapitalGainLoss">
+      <Name>Net capital gain or loss</Name>
+      <Description>Schedule D line 16: Combine short-term and long-term. This flows to Form 1040 line 7.</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency path="/shortTermGainLoss" />
+            <Dependency path="/longTermGainLoss" />
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/hasNetCapitalLoss">
+      <Name>Has net capital loss</Name>
+      <Description>Whether the net result is a loss (negative).</Description>
+
+      <Derived>
+        <LessThan>
+          <Left>
+            <Dependency path="/netCapitalGainLoss" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </LessThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/hasNetCapitalGain">
+      <Name>Has net capital gain</Name>
+      <Description>Whether the net result is a gain (positive). Used to determine if QDCG worksheet applies.</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Dependency path="/netCapitalGainLoss" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- Capital loss limitation: losses capped at -$3,000 ($1,500 for MFS) -->
+    <Fact path="/capitalLossLimit">
+      <Name>Capital loss limitation</Name>
+      <Description>Maximum deductible capital loss: $3,000 ($1,500 if MFS).</Description>
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+            </When>
+            <Then>
+              <Dollar>1500</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>3000</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/capitalGainOrLossFor1040">
+      <Name>Capital gain or loss for 1040</Name>
+      <Description>The amount to report on Form 1040 line 7. Gains flow through fully; losses are capped at -$3,000
+        (-$1,500 for MFS).</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Round>
+          <Switch>
+            <Case>
+              <!-- If a loss, cap at the limit -->
+              <When>
+                <Dependency path="/hasNetCapitalLoss" />
+              </When>
+              <Then>
+                <GreaterOf>
+                  <Dependency path="/netCapitalGainLoss" />
+                  <Multiply>
+                    <Int>-1</Int>
+                    <Dependency path="/capitalLossLimit" />
+                  </Multiply>
+                </GreaterOf>
+              </Then>
+            </Case>
+            <!-- If a gain or zero, pass through -->
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dependency path="/netCapitalGainLoss" />
+              </Then>
+            </Case>
+          </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Whether Schedule D is required (has any investment income) -->
+    <Fact path="/requiresScheduleD">
+      <Name>Requires Schedule D</Name>
+      <Description>Whether the taxpayer needs to file Schedule D.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Any>
+          <Dependency module="form8949" path="/hasForm8949Transactions" />
+          <GreaterThan>
+            <Left>
+              <Dependency path="/capitalGainDistributions" />
+            </Left>
+            <Right>
+              <Dollar>0</Dollar>
+            </Right>
+          </GreaterThan>
+        </Any>
+      </Derived>
+    </Fact>
+
+    <!-- QDCG worksheet eligibility: has qualified dividends OR net capital gain -->
+    <Fact path="/requiresQDCGWorksheet">
+      <Name>Requires QDCG Tax Worksheet</Name>
+      <Description>Whether the Qualified Dividends and Capital Gain Tax Worksheet is needed
+        (when taxpayer has qualified dividends or net capital gain that qualify for preferential rates).</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <Any>
+          <GreaterThan>
+            <Left>
+              <Dependency module="form1099DIV" path="/totalQualifiedDividends" />
+            </Left>
+            <Right>
+              <Dollar>0</Dollar>
+            </Right>
+          </GreaterThan>
+          <Dependency path="/hasNetCapitalGain" />
+        </Any>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>

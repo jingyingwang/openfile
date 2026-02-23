@@ -1,0 +1,388 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<!-- Form 8949: Sales and Other Dispositions of Capital Assets -->
+<FactDictionaryModule>
+  <Facts>
+
+    <Fact path="/form8949Transactions">
+      <Name>Form 8949 transactions</Name>
+      <Description>Collection of capital asset sales/dispositions reported on Form 8949.</Description>
+
+      <Writable>
+        <Collection />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949TransactionsIsDone">
+      <Name>Form 8949 entry is done</Name>
+      <Description>The user has clicked "Done" for their Form 8949 transactions</Description>
+      <Export downstreamFacts="true" />
+      <Writable>
+        <Boolean />
+      </Writable>
+      <Placeholder>
+        <False />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/hasForm8949Transactions">
+      <Name>Has Form 8949 transactions</Name>
+      <Description>Whether the TP has any Form 8949 transactions</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <CollectionSize>
+              <Dependency path="/form8949Transactions" />
+            </CollectionSize>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- Per-transaction fields -->
+
+    <Fact path="/form8949Transactions/*/description">
+      <Name>Description of property</Name>
+      <Description>Column (a): Description of property (e.g., 100 sh. XYZ Co.)</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <String />
+        <Limit type="MaxLength">
+          <Int>100</Int>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/dateAcquired">
+      <Name>Date acquired</Name>
+      <Description>Column (b): Date acquired (MM/DD/YYYY)</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <Day />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/dateSold">
+      <Name>Date sold or disposed</Name>
+      <Description>Column (c): Date sold or disposed of (MM/DD/YYYY)</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <Day />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/proceeds">
+      <Name>Proceeds</Name>
+      <Description>Column (d): Proceeds (sales price)</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/costBasis">
+      <Name>Cost or other basis</Name>
+      <Description>Column (e): Cost or other basis</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/writableAdjustmentCode">
+      <Name>Adjustment code</Name>
+      <Description>Column (f): Code for adjustments to gain or loss (e.g., B, W)</Description>
+
+      <Writable>
+        <String />
+        <Limit type="MaxLength">
+          <Int>5</Int>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/adjustmentCode">
+      <Name>Adjustment code</Name>
+      <Description>Column (f): Code for adjustments to gain or loss</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableAdjustmentCode" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableAdjustmentCode" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <String />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/writableAdjustmentAmount">
+      <Name>Adjustment amount</Name>
+      <Description>Column (g): Amount of adjustment</Description>
+
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/adjustmentAmount">
+      <Name>Adjustment amount</Name>
+      <Description>Column (g): Amount of adjustment</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableAdjustmentAmount" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableAdjustmentAmount" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/basisReportedToIRS">
+      <Name>Basis reported to IRS</Name>
+      <Description>Whether the cost basis was reported to the IRS by the broker (Box A/D vs B/E vs C/F).</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/hasSeenLastAvailableScreen">
+      <Name>Has seen last available screen</Name>
+      <Description>The user has gone through the entire flow for this transaction</Description>
+
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <!-- Holding period classification: user selects short-term vs long-term.
+         On Form 8949, Part I = short-term, Part II = long-term. The user knows
+         from their 1099-B which category applies. -->
+    <Fact path="/form8949Transactions/*/writableIsShortTerm">
+      <Name>Is short-term (user-entered)</Name>
+      <Description>Whether the asset was held for one year or less (short-term capital gain/loss).
+        The user selects this based on their 1099-B or holding period knowledge.</Description>
+
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/isShortTerm">
+      <Name>Is short-term</Name>
+      <Description>Whether the asset was held for one year or less (short-term capital gain/loss).</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Dependency path="../writableIsShortTerm" />
+      </Derived>
+    </Fact>
+
+    <Fact path="/form8949Transactions/*/isLongTerm">
+      <Name>Is long-term</Name>
+      <Description>Whether the asset was held for more than one year (long-term capital gain/loss).</Description>
+
+      <Derived>
+        <Not>
+          <Dependency path="../isShortTerm" />
+        </Not>
+      </Derived>
+    </Fact>
+
+    <!-- Derived: gain or loss per transaction -->
+    <Fact path="/form8949Transactions/*/gainLoss">
+      <Name>Gain or loss</Name>
+      <Description>Column (h): Gain or (loss) = proceeds - cost basis + adjustment amount</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Round>
+          <Add>
+            <Subtract>
+              <Minuend>
+                <Dependency path="../proceeds" />
+              </Minuend>
+              <Subtrahends>
+                <Dependency path="../costBasis" />
+              </Subtrahends>
+            </Subtract>
+            <Dependency path="../adjustmentAmount" />
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Completion check -->
+    <Fact path="/form8949Transactions/*/isComplete">
+      <Name>Is complete</Name>
+      <Description>Whether the Form 8949 transaction entry is complete.</Description>
+
+      <Derived>
+        <All>
+          <IsComplete>
+            <Dependency path="../hasSeenLastAvailableScreen" />
+          </IsComplete>
+          <Dependency path="../hasSeenLastAvailableScreen" />
+          <IsComplete>
+            <Dependency path="../description" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="../dateAcquired" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="../dateSold" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="../proceeds" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="../costBasis" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="../writableIsShortTerm" />
+          </IsComplete>
+        </All>
+      </Derived>
+    </Fact>
+
+    <!-- Aggregate facts for Schedule D -->
+
+    <Fact path="/shortTermGainLossFrom8949">
+      <Name>Short-term gain/loss from Form 8949</Name>
+      <Description>Total short-term capital gain or loss from Form 8949 transactions.</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Switch>
+              <Case>
+                <When>
+                  <Dependency path="/form8949Transactions/*/isShortTerm" />
+                </When>
+                <Then>
+                  <Dependency path="/form8949Transactions/*/gainLoss" />
+                </Then>
+              </Case>
+              <Case>
+                <When>
+                  <True />
+                </When>
+                <Then>
+                  <Dollar>0</Dollar>
+                </Then>
+              </Case>
+            </Switch>
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/longTermGainLossFrom8949">
+      <Name>Long-term gain/loss from Form 8949</Name>
+      <Description>Total long-term capital gain or loss from Form 8949 transactions.</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Switch>
+              <Case>
+                <When>
+                  <Dependency path="/form8949Transactions/*/isLongTerm" />
+                </When>
+                <Then>
+                  <Dependency path="/form8949Transactions/*/gainLoss" />
+                </Then>
+              </Case>
+              <Case>
+                <When>
+                  <True />
+                </When>
+                <Then>
+                  <Dollar>0</Dollar>
+                </Then>
+              </Case>
+            </Switch>
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/totalProceedsFrom8949">
+      <Name>Total proceeds from Form 8949</Name>
+      <Description>Total proceeds (column d) from all Form 8949 transactions.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Dependency path="/form8949Transactions/*/proceeds" />
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/totalCostBasisFrom8949">
+      <Name>Total cost basis from Form 8949</Name>
+      <Description>Total cost basis (column e) from all Form 8949 transactions.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Dependency path="/form8949Transactions/*/costBasis" />
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>

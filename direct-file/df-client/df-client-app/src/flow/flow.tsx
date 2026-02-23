@@ -14,6 +14,7 @@ import { AlaskaPermanentFundSubcategory } from './flow-chunks/income/AlaskaPerma
 import { SelfEmploymentIncomeSubcategory } from './flow-chunks/income/SelfEmploymentIncomeSubcategory.js';
 import { JobIncomeSubcategory } from './flow-chunks/income/JobIncomeSubcategory.js';
 import { InterestIncomeSubcategory } from './flow-chunks/income/InterestIncomeSubcategory.js';
+import { InvestmentIncomeSubcategory } from './flow-chunks/income/InvestmentIncomeSubcategory.js';
 import { UnemploymentIncomeSubcategory } from './flow-chunks/income/UnemploymentIncomeSubcategory.js';
 import { SocialSecurityIncomeSubcategory } from './flow-chunks/income/SocialSecurityIncomeSubcategory.js';
 import { DeductionsSubcategory } from './flow-chunks/credits-and-deductions/DeductionsSubcategory.js';
@@ -62,6 +63,7 @@ const flowNodes = (
 
       {UnemploymentIncomeSubcategory}
       {InterestIncomeSubcategory}
+      {InvestmentIncomeSubcategory}
       {AlaskaPermanentFundSubcategory}
       {DependentCareBenefitsSubcategory}
       {HsaSubcategory}

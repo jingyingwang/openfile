@@ -66,3 +66,8 @@ direct-file/scripts/*.csv
 # files created when building sbom.json files
 sbom.json
 
+
+# Gas Town (added by gt)
+.runtime/
+.claude/commands/
+.logs/

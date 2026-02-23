@@ -450,10 +450,772 @@
       </Derived>
     </Fact>
 
+    <!-- QDCG Tax Worksheet: Qualified Dividends and Capital Gain Tax Worksheet -->
+    <!-- This computes tax using preferential rates when qualified dividends or LTCG exist -->
+
+    <Fact path="/qdcgQualifiedIncome">
+      <Name>QDCG qualified income</Name>
+      <Description>Line 4 of QDCG worksheet: qualified dividends + net capital gain eligible for preferential rates.</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency module="form1099DIV" path="/totalQualifiedDividends" />
+            <Switch>
+              <Case>
+                <When>
+                  <Dependency module="scheduleD" path="/hasNetCapitalGain" />
+                </When>
+                <Then>
+                  <Dependency module="scheduleD" path="/longTermGainLoss" />
+                </Then>
+              </Case>
+              <Case>
+                <When>
+                  <True />
+                </When>
+                <Then>
+                  <Dollar>0</Dollar>
+                </Then>
+              </Case>
+            </Switch>
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/qdcgOrdinaryIncome">
+      <Name>QDCG ordinary income portion</Name>
+      <Description>Line 5 of QDCG worksheet: taxable income minus qualified income (taxed at normal rates).</Description>
+
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <Subtract>
+              <Minuend>
+                <Dependency path="/taxableIncome" />
+              </Minuend>
+              <Subtrahends>
+                <Dependency path="/qdcgQualifiedIncome" />
+              </Subtrahends>
+            </Subtract>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- QDCG 0% rate threshold (TY2024 values) -->
+    <Fact path="/qdcgZeroRateThreshold">
+      <Name>QDCG 0% rate threshold</Name>
+      <Description>Income threshold below which qualified dividends and LTCG are taxed at 0%.</Description>
+      <TaxYear>2024</TaxYear>
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+                <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+              </Any>
+            </When>
+            <Then>
+              <Dollar>94050</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusHOH" />
+            </When>
+            <Then>
+              <Dollar>63000</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <!-- Single and MFS -->
+              <Dollar>47025</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- QDCG 15% rate threshold (TY2024 values) -->
+    <Fact path="/qdcg15RateThreshold">
+      <Name>QDCG 15% rate threshold</Name>
+      <Description>Income threshold above which qualified dividends and LTCG are taxed at 20%.</Description>
+      <TaxYear>2024</TaxYear>
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+                <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+              </Any>
+            </When>
+            <Then>
+              <Dollar>583750</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusHOH" />
+            </When>
+            <Then>
+              <Dollar>551350</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+            </When>
+            <Then>
+              <Dollar>291850</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <!-- Single -->
+              <Dollar>518900</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- QDCG tax on ordinary income portion (using standard brackets, TY2024) -->
+    <Fact path="/qdcgTaxOnOrdinaryIncome">
+      <Name>QDCG tax on ordinary income</Name>
+      <Description>Tax on the ordinary income portion using standard tax brackets (QDCG worksheet line 22).
+        Same bracket rates as tentativeTaxFromTaxableIncome but applied to qdcgOrdinaryIncome.</Description>
+      <TaxYear>2024</TaxYear>
+
+      <Derived>
+        <Round>
+          <Switch>
+            <Case>
+              <When>
+                <LessThanOrEqual>
+                  <Left>
+                    <Dependency path="/qdcgOrdinaryIncome" />
+                  </Left>
+                  <Right>
+                    <Dollar>0</Dollar>
+                  </Right>
+                </LessThanOrEqual>
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+            <!-- MFJ / QSS brackets on ordinary income -->
+            <Case>
+              <When>
+                <Any>
+                  <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+                  <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+                </Any>
+              </When>
+              <Then>
+                <Switch>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>23200</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Multiply><Rational>10/100</Rational><Dependency path="/qdcgOrdinaryIncome" /></Multiply>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>94300</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>2320</Dollar>
+                        <Multiply><Rational>12/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>23200</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>201050</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>10852</Dollar>
+                        <Multiply><Rational>22/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>94300</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>383900</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>34337</Dollar>
+                        <Multiply><Rational>24/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>201050</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>487450</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>78221</Dollar>
+                        <Multiply><Rational>32/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>383900</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>731200</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>111357</Dollar>
+                        <Multiply><Rational>35/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>487450</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When><True /></When>
+                    <Then>
+                      <Add>
+                        <Dollar>196669.50</Dollar>
+                        <Multiply><Rational>37/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>731200</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                </Switch>
+              </Then>
+            </Case>
+            <!-- HOH brackets on ordinary income -->
+            <Case>
+              <When>
+                <Dependency module="filingStatus" path="/isFilingStatusHOH" />
+              </When>
+              <Then>
+                <Switch>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>16550</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Multiply><Rational>10/100</Rational><Dependency path="/qdcgOrdinaryIncome" /></Multiply>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>63100</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>1655</Dollar>
+                        <Multiply><Rational>12/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>16550</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>100500</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>7241</Dollar>
+                        <Multiply><Rational>22/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>63100</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>191950</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>15469</Dollar>
+                        <Multiply><Rational>24/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>100500</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>243700</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>37417</Dollar>
+                        <Multiply><Rational>32/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>191950</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>609350</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>53977</Dollar>
+                        <Multiply><Rational>35/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>243700</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When><True /></When>
+                    <Then>
+                      <Add>
+                        <Dollar>181954.50</Dollar>
+                        <Multiply><Rational>37/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>609350</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                </Switch>
+              </Then>
+            </Case>
+            <!-- MFS brackets on ordinary income (TY2024) -->
+            <Case>
+              <When>
+                <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+              </When>
+              <Then>
+                <Switch>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>11600</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Multiply><Rational>10/100</Rational><Dependency path="/qdcgOrdinaryIncome" /></Multiply>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>47150</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>1160</Dollar>
+                        <Multiply><Rational>12/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>11600</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>100525</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>5426</Dollar>
+                        <Multiply><Rational>22/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>47150</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>191950</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>17168.50</Dollar>
+                        <Multiply><Rational>24/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>100525</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>243725</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>39110.50</Dollar>
+                        <Multiply><Rational>32/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>191950</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>365600</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>55678.50</Dollar>
+                        <Multiply><Rational>35/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>243725</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When><True /></When>
+                    <Then>
+                      <Add>
+                        <Dollar>98334.75</Dollar>
+                        <Multiply><Rational>37/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>365600</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                </Switch>
+              </Then>
+            </Case>
+            <!-- Single brackets on ordinary income (TY2024, catch-all) -->
+            <Case>
+              <When><True /></When>
+              <Then>
+                <Switch>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>11600</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Multiply><Rational>10/100</Rational><Dependency path="/qdcgOrdinaryIncome" /></Multiply>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>47150</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>1160</Dollar>
+                        <Multiply><Rational>12/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>11600</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>100525</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>5426</Dollar>
+                        <Multiply><Rational>22/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>47150</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>191950</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>17168.50</Dollar>
+                        <Multiply><Rational>24/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>100525</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>243725</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>39110.50</Dollar>
+                        <Multiply><Rational>32/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>191950</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <LessThanOrEqual>
+                        <Left><Dependency path="/qdcgOrdinaryIncome" /></Left>
+                        <Right><Dollar>609350</Dollar></Right>
+                      </LessThanOrEqual>
+                    </When>
+                    <Then>
+                      <Add>
+                        <Dollar>55678.50</Dollar>
+                        <Multiply><Rational>35/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>243725</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When><True /></When>
+                    <Then>
+                      <Add>
+                        <Dollar>183647.25</Dollar>
+                        <Multiply><Rational>37/100</Rational>
+                          <Subtract><Minuend><Dependency path="/qdcgOrdinaryIncome" /></Minuend>
+                            <Subtrahends><Dollar>609350</Dollar></Subtrahends></Subtract>
+                        </Multiply>
+                      </Add>
+                    </Then>
+                  </Case>
+                </Switch>
+              </Then>
+            </Case>
+          </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Qualified income taxed at 0% -->
+    <Fact path="/qdcgIncomeAt0Pct">
+      <Name>QDCG income at 0%</Name>
+      <Description>Portion of qualified income taxed at 0%.</Description>
+
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <LesserOf>
+              <Dependency path="/qdcgQualifiedIncome" />
+              <GreaterOf>
+                <Subtract>
+                  <Minuend>
+                    <Dependency path="/qdcgZeroRateThreshold" />
+                  </Minuend>
+                  <Subtrahends>
+                    <Dependency path="/qdcgOrdinaryIncome" />
+                  </Subtrahends>
+                </Subtract>
+                <Dollar>0</Dollar>
+              </GreaterOf>
+            </LesserOf>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Qualified income taxed at 15% -->
+    <Fact path="/qdcgIncomeAt15Pct">
+      <Name>QDCG income at 15%</Name>
+      <Description>Portion of qualified income taxed at 15%.</Description>
+
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <LesserOf>
+              <Subtract>
+                <Minuend>
+                  <Dependency path="/qdcgQualifiedIncome" />
+                </Minuend>
+                <Subtrahends>
+                  <Dependency path="/qdcgIncomeAt0Pct" />
+                </Subtrahends>
+              </Subtract>
+              <GreaterOf>
+                <Subtract>
+                  <Minuend>
+                    <Dependency path="/qdcg15RateThreshold" />
+                  </Minuend>
+                  <Subtrahends>
+                    <Add>
+                      <Dependency path="/qdcgOrdinaryIncome" />
+                      <Dependency path="/qdcgIncomeAt0Pct" />
+                    </Add>
+                  </Subtrahends>
+                </Subtract>
+                <Dollar>0</Dollar>
+              </GreaterOf>
+            </LesserOf>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Qualified income taxed at 20% -->
+    <Fact path="/qdcgIncomeAt20Pct">
+      <Name>QDCG income at 20%</Name>
+      <Description>Portion of qualified income taxed at 20%.</Description>
+
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <Subtract>
+              <Minuend>
+                <Dependency path="/qdcgQualifiedIncome" />
+              </Minuend>
+              <Subtrahends>
+                <Add>
+                  <Dependency path="/qdcgIncomeAt0Pct" />
+                  <Dependency path="/qdcgIncomeAt15Pct" />
+                </Add>
+              </Subtrahends>
+            </Subtract>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Total QDCG preferential tax -->
+    <Fact path="/qdcgPreferentialTax">
+      <Name>QDCG preferential tax</Name>
+      <Description>Tax on qualified dividends and capital gains at preferential rates (0%/15%/20%).</Description>
+
+      <Derived>
+        <Round>
+          <Add>
+            <!-- 0% on first bracket: $0 -->
+            <Multiply>
+              <Rational>15/100</Rational>
+              <Dependency path="/qdcgIncomeAt15Pct" />
+            </Multiply>
+            <Multiply>
+              <Rational>20/100</Rational>
+              <Dependency path="/qdcgIncomeAt20Pct" />
+            </Multiply>
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
     <Fact path="/tentativeTaxFromTaxableIncome">
       <Name>Tentative tax from taxable income</Name>
       <Description>Tentative tax as reported on line 16 of Form 1040.
         Rev Proc .01 Tax Rate Tables §1(j)(2)(A|B|C|D)
+        When qualified dividends or net capital gains exist, uses the QDCG worksheet
+        to apply preferential 0%/15%/20% rates on those portions.
         TODO: Replace Any/Equal with Include</Description>
       <Export mef="true" />
       <ExportZero />
@@ -1329,6 +2091,21 @@
               </Then>
             </Case>
           </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- QDCG worksheet total: tax on ordinary income + preferential tax on qualified income -->
+    <Fact path="/qdcgWorksheetTax">
+      <Name>QDCG worksheet tax</Name>
+      <Description>Total tax using QDCG worksheet: bracket tax on ordinary income + preferential tax on qualified income.</Description>
+
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency path="/qdcgTaxOnOrdinaryIncome" />
+            <Dependency path="/qdcgPreferentialTax" />
+          </Add>
         </Round>
       </Derived>
     </Fact>
@@ -2216,6 +2993,39 @@
       </Derived>
     </Fact>
 
+    <!-- Line 16 tax: uses QDCG worksheet when applicable (lesser of regular vs QDCG) -->
+    <Fact path="/line16Tax">
+      <Name>Line 16 tax</Name>
+      <Description>Tax from line 16 of Form 1040. When QDCG worksheet applies, uses the lesser of
+        regular bracket tax and QDCG worksheet tax.</Description>
+
+      <Derived>
+        <Round>
+          <Switch>
+            <Case>
+              <When>
+                <Dependency module="scheduleD" path="/requiresQDCGWorksheet" />
+              </When>
+              <Then>
+                <LesserOf>
+                  <Dependency path="/tentativeTaxFromTaxableIncome" />
+                  <Dependency path="/qdcgWorksheetTax" />
+                </LesserOf>
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dependency path="/tentativeTaxFromTaxableIncome" />
+              </Then>
+            </Case>
+          </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
     <Fact path="/totalTentativeTax">
       <Name>Total tentative tax</Name>
       <Description>Total tentative tax as reported on line 18 of Form 1040.</Description>
@@ -2225,7 +3035,7 @@
       <Derived>
         <Round>
           <Add>
-            <Dependency path="/tentativeTaxFromTaxableIncome" />
+            <Dependency path="/line16Tax" />
             <Dependency module="schedule2" path="/totalAdditionalTaxesOwed" />
           </Add>
         </Round>
@@ -2354,6 +3164,7 @@
           <Dependency module="form1099Misc" path="/form1099MiscFederalIncomeTaxWithheld" />
           <Dependency module="form1099Rs" path="/form1099RsFederalIncomeTaxWithheld" />
           <Dependency module="form1099NEC" path="/form1099NECFederalTaxWithheld" />
+          <Dependency module="form1099DIV" path="/form1099DIVFederalTaxWithheld" />
         </Add>
       </Derived>
     </Fact>

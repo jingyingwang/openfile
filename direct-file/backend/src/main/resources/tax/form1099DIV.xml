@@ -1,0 +1,416 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<!-- Form 1099-DIV: Dividends and Distributions -->
+<FactDictionaryModule>
+  <Facts>
+
+    <Fact path="/form1099DIVs">
+      <Name>1099-DIV forms</Name>
+      <Description>Collection of Form 1099-DIV dividend income reports.</Description>
+
+      <Writable>
+        <Collection />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVsIsDone">
+      <Name>1099-DIV entry is done</Name>
+      <Description>The user has clicked "Done" for their 1099-DIV forms</Description>
+      <Export downstreamFacts="true" />
+      <Writable>
+        <Boolean />
+      </Writable>
+      <Placeholder>
+        <False />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/has1099DIV">
+      <Name>Has 1099-DIV</Name>
+      <Description>Whether the TP has any 1099-DIV forms</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <CollectionSize>
+              <Dependency path="/form1099DIVs" />
+            </CollectionSize>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- Per-item fields -->
+
+    <Fact path="/form1099DIVs/*/filer">
+      <Name>Filer</Name>
+      <Description>The taxpayer who received the dividend income.</Description>
+
+      <Writable>
+        <CollectionItem collection="/filers" />
+      </Writable>
+      <Placeholder>
+        <Dependency path="/primaryFiler" />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/belongsToPrimaryFiler">
+      <Name>Belongs to primary filer</Name>
+      <Description>The 1099-DIV belongs to the primary filer</Description>
+
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/primaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/belongsToSecondaryFiler">
+      <Name>Belongs to secondary filer</Name>
+      <Description>The 1099-DIV belongs to the secondary filer</Description>
+
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/secondaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/payer">
+      <Name>Payer</Name>
+      <Description>The entity that paid the dividends.</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <String />
+        <Limit type="Match">
+          <String><![CDATA[(([A-Za-z0-9#\-\(\)]|&|')\s?)*([A-Za-z0-9#\-\(\)]|&|')]]></String>
+        </Limit>
+        <Limit type="MaxLength">
+          <Int>75</Int>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/payer/tin">
+      <Name>Payer TIN</Name>
+      <Description>The taxpayer identification number of the dividend payer.</Description>
+      <Export mef="true" />
+
+      <Writable>
+        <EIN />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/hasSeenLastAvailableScreen">
+      <Name>Has seen last available screen</Name>
+      <Description>The user has gone through the entire flow of 1099-DIV screens</Description>
+
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <!-- Box 1a: Total ordinary dividends -->
+    <Fact path="/form1099DIVs/*/writableOrdinaryDividends">
+      <Name>Ordinary dividends (Box 1a)</Name>
+      <Description>Box 1a on the 1099-DIV. Total ordinary dividends.</Description>
+
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/ordinaryDividends">
+      <Name>Ordinary dividends (Box 1a)</Name>
+      <Description>Box 1a on the 1099-DIV.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableOrdinaryDividends" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableOrdinaryDividends" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Box 1b: Qualified dividends -->
+    <Fact path="/form1099DIVs/*/writableQualifiedDividends">
+      <Name>Qualified dividends (Box 1b)</Name>
+      <Description>Box 1b on the 1099-DIV. Qualified dividends eligible for preferential tax rates.</Description>
+
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/qualifiedDividends">
+      <Name>Qualified dividends (Box 1b)</Name>
+      <Description>Box 1b on the 1099-DIV.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableQualifiedDividends" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableQualifiedDividends" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Box 2a: Total capital gain distributions -->
+    <Fact path="/form1099DIVs/*/writableTotalCapitalGain">
+      <Name>Total capital gain distribution (Box 2a)</Name>
+      <Description>Box 2a on the 1099-DIV. Total capital gain distributions.</Description>
+
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/totalCapitalGain">
+      <Name>Total capital gain distribution (Box 2a)</Name>
+      <Description>Box 2a on the 1099-DIV.</Description>
+      <Export mef="true" />
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableTotalCapitalGain" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableTotalCapitalGain" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Box 4: Federal income tax withheld -->
+    <Fact path="/form1099DIVs/*/writableFederalTaxWithheld">
+      <Name>Federal income tax withheld (Box 4)</Name>
+      <Description>Box 4 on the 1099-DIV.</Description>
+
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/federalTaxWithheld">
+      <Name>Federal income tax withheld (Box 4)</Name>
+      <Description>Box 4 on the 1099-DIV.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <ExportZero />
+
+      <Derived>
+        <Round>
+          <Switch>
+            <Case>
+              <When>
+                <IsComplete>
+                  <Dependency path="../writableFederalTaxWithheld" />
+                </IsComplete>
+              </When>
+              <Then>
+                <Dependency path="../writableFederalTaxWithheld" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+          </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Box 7: Foreign tax paid -->
+    <Fact path="/form1099DIVs/*/writableForeignTaxPaid">
+      <Name>Foreign tax paid (Box 7)</Name>
+      <Description>Box 7 on the 1099-DIV.</Description>
+
+      <Writable>
+        <Dollar />
+        <Limit type="Min">
+          <Dollar>0</Dollar>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099DIVs/*/foreignTaxPaid">
+      <Name>Foreign tax paid (Box 7)</Name>
+      <Description>Box 7 on the 1099-DIV.</Description>
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../writableForeignTaxPaid" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../writableForeignTaxPaid" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Completion check per item -->
+    <Fact path="/form1099DIVs/*/isComplete">
+      <Name>Is complete</Name>
+      <Description>Whether the 1099-DIV entry is complete.</Description>
+
+      <Derived>
+        <All>
+          <IsComplete>
+            <Dependency path="../hasSeenLastAvailableScreen" />
+          </IsComplete>
+          <Dependency path="../hasSeenLastAvailableScreen" />
+          <IsComplete>
+            <Dependency path="../ordinaryDividends" />
+          </IsComplete>
+        </All>
+      </Derived>
+    </Fact>
+
+    <!-- Aggregate facts -->
+
+    <Fact path="/totalOrdinaryDividends">
+      <Name>Total ordinary dividends</Name>
+      <Description>Sum of Box 1a across all 1099-DIVs. Reported on Form 1040 line 3b.</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Dependency path="/form1099DIVs/*/ordinaryDividends" />
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/totalQualifiedDividends">
+      <Name>Total qualified dividends</Name>
+      <Description>Sum of Box 1b across all 1099-DIVs. Reported on Form 1040 line 3a.</Description>
+      <Export downstreamFacts="true" mef="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Dependency path="/form1099DIVs/*/qualifiedDividends" />
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/totalCapitalGainDistributions">
+      <Name>Total capital gain distributions</Name>
+      <Description>Sum of Box 2a across all 1099-DIVs. Flows to Schedule D.</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Dependency path="/form1099DIVs/*/totalCapitalGain" />
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099DIVFederalTaxWithheld">
+      <Name>Total 1099-DIV federal tax withheld</Name>
+      <Description>Sum of Box 4 across all 1099-DIVs.</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <Round>
+          <CollectionSum>
+            <Dependency path="/form1099DIVs/*/federalTaxWithheld" />
+          </CollectionSum>
+        </Round>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>
