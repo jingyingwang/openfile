@@ -41,10 +41,7 @@ export const SelfEmploymentIncomeSubcategory = (
         i18nKey='/heading/income/self-employment/gateway'
         condition={{ operator: `isFalse`, condition: `/isFilingStatusMFJ` }}
       />
-      <Heading
-        i18nKey='/heading/income/self-employment/gateway-mfj'
-        condition='/isFilingStatusMFJ'
-      />
+      <Heading i18nKey='/heading/income/self-employment/gateway-mfj' condition='/isFilingStatusMFJ' />
       <InfoDisplay i18nKey='/info/income/self-employment/gateway' />
       <DFModal i18nKey='/info/income/self-employment/what-counts' />
       <Boolean path='/hasSelfEmploymentIncome' />
