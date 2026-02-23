@@ -1,0 +1,190 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+    <!-- ===================== CONSTANTS ===================== -->
+    <Fact path="/seSocialSecurityTaxRate">
+      <Description>Combined Social Security tax rate (employer + employee) for SE tax: 12.4%.</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Rational>124/1000</Rational>
+      </Derived>
+    </Fact>
+
+    <Fact path="/seMedicareTaxRate">
+      <Description>Combined Medicare tax rate (employer + employee) for SE tax: 2.9%.</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Rational>29/1000</Rational>
+      </Derived>
+    </Fact>
+
+    <Fact path="/seCombinedTaxRate">
+      <Description>Combined SE tax rate: 15.3% (12.4% SS + 2.9% Medicare).</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Rational>153/1000</Rational>
+      </Derived>
+    </Fact>
+
+    <Fact path="/seSocialSecurityWageBase">
+      <Description>Social Security wage base for SE tax. For TY2024 this is $168,600.
+        Only the first this-amount of net SE earnings is subject to the 12.4% SS portion.</Description>
+      <Export downstreamFacts="true" />
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>168600</Dollar>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== SCHEDULE SE LINE 2 ===================== -->
+    <!-- Line 2: Net farm profit (or loss) — out of scope, always 0 -->
+
+    <!-- ===================== SCHEDULE SE LINE 3 ===================== -->
+    <!-- Line 3: Combine lines 1a, 1b, and 2. This is the total SE income. -->
+    <Fact path="/totalSEIncome">
+      <Name>Total self-employment income</Name>
+      <Description>Schedule SE line 3. Net profit (or loss) from Schedule C plus net farm profit.
+        Since farm income is out of scope, this equals Schedule C total net profit.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency module="scheduleC" path="/scheduleCTotalNetProfit" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency module="scheduleC" path="/scheduleCTotalNetProfit" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== SCHEDULE SE LINE 4a ===================== -->
+    <!-- Line 4a: If line 3 is more than zero, multiply line 3 by 92.35% (0.9235). -->
+    <Fact path="/netSEEarnings">
+      <Name>Net self-employment earnings</Name>
+      <Description>Schedule SE line 4a. 92.35% of total SE income (line 3).
+        This reflects the "employer equivalent" deduction — self-employed individuals
+        only pay SE tax on 92.35% of net income, mirroring how employees only pay
+        FICA on wages (the employer pays the other half).</Description>
+      <Export mef="true" />
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <Multiply>
+              <Dependency path="/totalSEIncome" />
+              <Rational>9235/10000</Rational>
+            </Multiply>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== SE TAX COMPUTATION ===================== -->
+    <!-- The SE tax has two components:
+         1. Social Security: 12.4% on the lesser of net SE earnings or the SS wage base
+         2. Medicare: 2.9% on ALL net SE earnings (no cap)
+         Total SE tax = SS portion + Medicare portion -->
+
+    <!-- Social Security portion: 12.4% on lesser of net SE earnings or wage base -->
+    <Fact path="/seEarningsSubjectToSS">
+      <Description>The amount of net SE earnings subject to Social Security tax.
+        This is the lesser of net SE earnings or the SS wage base ($168,600 for TY2024).</Description>
+      <Derived>
+        <LesserOf>
+          <Dependency path="/netSEEarnings" />
+          <Dependency path="/seSocialSecurityWageBase" />
+        </LesserOf>
+      </Derived>
+    </Fact>
+
+    <Fact path="/seSocialSecurityTax">
+      <Description>Social Security portion of SE tax: 12.4% of earnings subject to SS.</Description>
+      <Derived>
+        <Round>
+          <Multiply>
+            <Dependency path="/seEarningsSubjectToSS" />
+            <Rational>124/1000</Rational>
+          </Multiply>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Medicare portion: 2.9% on all net SE earnings (no wage base cap) -->
+    <Fact path="/seMedicareTax">
+      <Description>Medicare portion of SE tax: 2.9% of all net SE earnings (no cap).</Description>
+      <Derived>
+        <Round>
+          <Multiply>
+            <Dependency path="/netSEEarnings" />
+            <Rational>29/1000</Rational>
+          </Multiply>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== SCHEDULE SE LINE 12 ===================== -->
+    <!-- Total SE tax = SS tax + Medicare tax -->
+    <Fact path="/seTax">
+      <Name>Self-employment tax</Name>
+      <Description>Schedule SE line 12. Total self-employment tax (SS + Medicare).
+        This amount is added to Schedule 2 (additional taxes owed) and flows
+        to Form 1040 line 23.</Description>
+      <Export mef="true" downstreamFacts="true" />
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency path="/seSocialSecurityTax" />
+            <Dependency path="/seMedicareTax" />
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== SCHEDULE SE LINE 13 ===================== -->
+    <!-- Deductible half of SE tax = 50% of total SE tax -->
+    <Fact path="/deductibleHalfOfSETax">
+      <Name>Deductible half of self-employment tax</Name>
+      <Description>Schedule SE line 13. 50% of SE tax, deductible as an adjustment
+        to income on Schedule 1 line 15. This flows into
+        /adjustmentsToIncomeExcludingStudentLoanInterest in taxCalculations.</Description>
+      <Export mef="true" downstreamFacts="true" />
+      <Derived>
+        <Round>
+          <Multiply>
+            <Dependency path="/seTax" />
+            <Rational>1/2</Rational>
+          </Multiply>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== GATING FLAGS ===================== -->
+    <Fact path="/requiresScheduleSE">
+      <Description>Whether Schedule SE is required. True when total SE income exceeds $400.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <GreaterThanOrEqual>
+          <Left>
+            <Dependency path="/totalSEIncome" />
+          </Left>
+          <Right>
+            <Dollar>400</Dollar>
+          </Right>
+        </GreaterThanOrEqual>
+      </Derived>
+    </Fact>
+  </Facts>
+</FactDictionaryModule>

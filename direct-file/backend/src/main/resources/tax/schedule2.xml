@@ -9,13 +9,16 @@
           <IsComplete>
             <Dependency module="ptc" path="/netPtcAmountWhenNegative" />
           </IsComplete>
+          <IsComplete>
+            <Dependency module="scheduleSE" path="/requiresScheduleSE" />
+          </IsComplete>
         </Any>
       </Derived>
     </Fact>
 
-    <Fact path="/totalAdditionalTaxesOwed">
-      <Description>Line 3 of schedule 2 for line 17 of form 1040</Description>
-      <Export mef="true" downstreamFacts="true" />
+    <!-- PTC repayment amount (Schedule 2 Part I, line 2) -->
+    <Fact path="/schedule2PtcRepayment">
+      <Description>PTC excess advance payment repayment for Schedule 2.</Description>
       <Derived>
         <Switch>
           <Case>
@@ -37,6 +40,47 @@
             </Then>
           </Case>
         </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- SE tax amount (Schedule 2 Part II, line 4) -->
+    <Fact path="/schedule2SETax">
+      <Description>Self-employment tax for Schedule 2.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency module="scheduleSE" path="/seTax" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency module="scheduleSE" path="/seTax" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/totalAdditionalTaxesOwed">
+      <Description>Line 21 of Schedule 2 for line 23 of Form 1040. Sum of all additional taxes
+        including PTC repayment (Part I) and SE tax (Part II).</Description>
+      <Export mef="true" downstreamFacts="true" />
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency path="/schedule2PtcRepayment" />
+            <Dependency path="/schedule2SETax" />
+          </Add>
+        </Round>
       </Derived>
     </Fact>
   </Facts>

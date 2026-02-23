@@ -96,6 +96,26 @@
           <!-- Certain business expenses of reservists, performing artists, and fee-basis government officials. -->
           <!-- Moving expenses for members of the Armed Forces. Attach Form 3903  -->
           <!-- Deductible part of self-employment tax. Attach Schedule SE -->
+          <Switch>
+            <Case>
+              <When>
+                <IsComplete>
+                  <Dependency module="scheduleSE" path="/deductibleHalfOfSETax" />
+                </IsComplete>
+              </When>
+              <Then>
+                <Dependency module="scheduleSE" path="/deductibleHalfOfSETax" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+          </Switch>
           <!-- Self-employed SEP, SIMPLE, and qualified plans -->
           <!-- Self-employed health insurance deduction -->
           <!-- Penalty on early withdrawal of savings -->
