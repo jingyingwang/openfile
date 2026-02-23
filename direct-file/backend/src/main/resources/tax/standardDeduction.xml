@@ -188,6 +188,41 @@
       </Derived>
     </Fact>
 
+    <Fact path="/additionalStandardDeductionMultiplier">
+      <Name>Additional standard deduction multiplier</Name>
+      <Description>The amount to add to the standard deduction for each additional item.
+        Rev Proc 2024-40 Standard Deduction §63(f)</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusHOH" />
+                <Dependency module="filingStatus" path="/isFilingStatusSingle" />
+              </Any>
+            </When>
+            <Then>
+              <Dollar>2000</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+                <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+                <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+              </Any>
+            </When>
+            <Then>
+              <Dollar>1600</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
     <Fact path="/additionalStandardDeduction">
       <Name>Additional standard deduction</Name>
       <Description>The additional amount to add to the standard deduction to account for blindness or old age.</Description>
@@ -215,6 +250,20 @@
       </Derived>
     </Fact>
 
+    <Fact path="/MFJStandardDeduction">
+      <Name>Married Filing Jointly Standard Deduction</Name>
+      <Description>Standard Deduction for filers who are married filing jointly.
+        Rev Proc 2024-40, OBBBA §1(j)(2)(A)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>
+          31500
+        </Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/singleOrMFSStandardDeduction">
       <Name>Single or Married Filing Separately Standard Deduction</Name>
       <Description>Standard Deduction for filers who are married filing separately or single.
@@ -231,6 +280,20 @@
       </Derived>
     </Fact>
 
+    <Fact path="/singleOrMFSStandardDeduction">
+      <Name>Single or Married Filing Separately Standard Deduction</Name>
+      <Description>Standard Deduction for filers who are married filing separately or single.
+        Rev Proc 2024-40, OBBBA §1(j)(2)(C) §1(j)(2)(D)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>
+          15750
+        </Dollar>
+      </Derived>
+    </Fact>
+
     <Fact path="/HoHStandardDeduction">
       <Name>HoH Standard Deduction</Name>
       <Description>Standard Deduction for filers who are filing HoH.
@@ -241,6 +304,20 @@
       <Derived>
         <Dollar>
           21900
+        </Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/HoHStandardDeduction">
+      <Name>HoH Standard Deduction</Name>
+      <Description>Standard Deduction for filers who are filing HoH.
+        Rev Proc 2024-40, OBBBA §1(j)(2)(B)
+      </Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Dollar>
+          23625
         </Dollar>
       </Derived>
     </Fact>
@@ -311,6 +388,27 @@
         <Add>
           <GreaterOf>
             <Dollar>1300</Dollar>
+            <Add>
+              <Dependency module="income" path="/employerIncomeSubtotal" />
+              <Dollar>450</Dollar>
+            </Add>
+          </GreaterOf>
+          <Dependency path="/additionalStandardDeduction" />
+        </Add>
+      </Derived>
+    </Fact>
+
+    <Fact path="/minimumStandardDeduction">
+      <Name>Minimum standard deduction</Name>
+      <Description>The alternative amount to use as the standard deduction if a filer can be claimed as a dependent.
+        This amount is not used if it exceeds the normal amount of the standard deduction.
+        Rev Proc 2024-40 Standard Deduction §63(c)(5)</Description>
+      <TaxYear>2025</TaxYear>
+
+      <Derived>
+        <Add>
+          <GreaterOf>
+            <Dollar>1350</Dollar>
             <Add>
               <Dependency module="income" path="/employerIncomeSubtotal" />
               <Dollar>450</Dollar>
