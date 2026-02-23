@@ -1,0 +1,80 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- OBBBA 100% Bonus Depreciation — Schedule C line 13 stub -->
+    <!-- This is a simple input stub for self-employed filers to report -->
+    <!-- bonus depreciation on qualifying business assets -->
+    <!-- Full Schedule C is out of scope; this is a minimal stub for the OBBBA provision -->
+
+    <Fact path="/hasSelfEmploymentIncome">
+      <Name>Has self-employment income</Name>
+      <Description>Whether the taxpayer has self-employment income reported on Schedule C</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/hasQualifyingBonusDepreciation">
+      <Name>Has qualifying bonus depreciation</Name>
+      <Description>Whether the taxpayer has qualifying assets for 100% bonus depreciation under OBBBA</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/flowShowBonusDepreciationSection">
+      <Description>Whether to show the bonus depreciation section</Description>
+      <Derived>
+        <All>
+          <Not>
+            <Dependency module="filingStatus" path="/isMFJDependent" />
+          </Not>
+          <Dependency path="/hasSelfEmploymentIncome" />
+        </All>
+      </Derived>
+    </Fact>
+
+    <Fact path="/bonusDepreciationAmount">
+      <Name>Bonus depreciation amount</Name>
+      <Description>100% bonus depreciation amount for Schedule C line 13. This is the cost of
+        qualifying business assets placed in service during the tax year.</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/bonusDepreciationDeduction">
+      <Name>Bonus Depreciation Deduction</Name>
+      <Description>Bonus depreciation deduction for Schedule C line 13. Under OBBBA, 100% of the cost
+        of qualifying assets is deductible in the year placed in service.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <All>
+                <Dependency path="/flowShowBonusDepreciationSection" />
+                <Dependency path="/hasQualifyingBonusDepreciation" />
+              </All>
+            </When>
+            <Then>
+              <Round>
+                <Dependency path="/bonusDepreciationAmount" />
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>

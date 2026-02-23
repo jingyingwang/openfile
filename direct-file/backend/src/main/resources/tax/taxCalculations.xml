@@ -93,6 +93,69 @@
               </Then>
             </Case>
           </Switch>
+          <!-- OBBBA: Car Loan Interest Deduction -->
+          <Switch>
+            <Case>
+              <When>
+                <IsComplete>
+                  <Dependency module="carLoanInterest" path="/carLoanInterestAdjustment" />
+                </IsComplete>
+              </When>
+              <Then>
+                <Dependency module="carLoanInterest" path="/carLoanInterestAdjustment" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+          </Switch>
+          <!-- OBBBA: Trump Accounts (Form 4547) -->
+          <Switch>
+            <Case>
+              <When>
+                <IsComplete>
+                  <Dependency module="trumpAccounts" path="/trumpAccountAdjustment" />
+                </IsComplete>
+              </When>
+              <Then>
+                <Dependency module="trumpAccounts" path="/trumpAccountAdjustment" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+          </Switch>
+          <!-- OBBBA: 100% Bonus Depreciation (Schedule C line 13 stub) -->
+          <Switch>
+            <Case>
+              <When>
+                <IsComplete>
+                  <Dependency module="bonusDepreciation" path="/bonusDepreciationDeduction" />
+                </IsComplete>
+              </When>
+              <Then>
+                <Dependency module="bonusDepreciation" path="/bonusDepreciationDeduction" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+          </Switch>
           <!-- Certain business expenses of reservists, performing artists, and fee-basis government officials. -->
           <!-- Moving expenses for members of the Armed Forces. Attach Form 3903  -->
           <!-- Deductible part of self-employment tax. Attach Schedule SE -->
@@ -258,11 +321,14 @@
 
     <Fact path="/adjustmentsTotal">
       <Name>Other Deductions</Name>
-      <Description>Deductions such as educator expenses and student loan interest</Description>
+      <Description>Deductions such as educator expenses, student loan interest, and OBBBA adjustments</Description>
       <Derived>
         <Add>
           <Dependency module="educatorAdjustment" path="/educatorExpensesAdjustment" />
           <Dependency module="studentLoanAdjustment" path="/studentLoanInterestAdjustmentAmount" />
+          <Dependency module="carLoanInterest" path="/carLoanInterestAdjustment" />
+          <Dependency module="trumpAccounts" path="/trumpAccountAdjustment" />
+          <Dependency module="bonusDepreciation" path="/bonusDepreciationDeduction" />
         </Add>
       </Derived>
     </Fact>
@@ -3233,13 +3299,14 @@
       </Description>
 
       <Derived>
-        <!-- Needs to be updated when we support other credits -->
         <Any>
           <!-- Because ACTC is refundable -->
           <Dependency module="ctcOdc" path="/ctcQualified" />
           <Dependency module="eitc" path="/eitcQualified" />
           <!-- This fact should be true even when you just owe APTC -->
           <Dependency module="ptc" path="/needsToFileForm8962" />
+          <!-- OBBBA Adoption Credit (refundable) -->
+          <Dependency module="adoptionCredit" path="/qualifiedForAdoptionCredit" />
         </Any>
       </Derived>
     </Fact>
@@ -3256,6 +3323,8 @@
             <Dependency module="ctcOdc" path="/additionalCtc" />
             <Dependency path="/americanOpportunityCredit" />
             <Dependency module="schedule3" path="/otherPaymentsAndRefundableCreditsTotal" />
+            <!-- OBBBA Adoption Credit (refundable) -->
+            <Dependency module="adoptionCredit" path="/adoptionCreditAmount" />
           </Add>
         </Round>
       </Derived>

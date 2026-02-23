@@ -419,6 +419,131 @@ export const DeductionsSubcategory = (
 
     {ItemizedDeductionsSubSubcategory}
 
+    {/* OBBBA: Car Loan Interest Deduction */}
+    <Gate condition='/flowShowCarLoanInterestSection'>
+      <SubSubcategory route='car-loan-interest-deduction'>
+        <Assertion
+          type='info'
+          i18nKey='dataviews./flow/credits-and-deductions/deductions.assertions./carLoanInterestAdjustment'
+          conditions={[
+            `/flowShowCarLoanInterestAmount`,
+            { operator: `isComplete`, condition: `/carLoanInterestAdjustment` },
+          ]}
+        />
+        <Screen route='had-car-loan-interest'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/car-loan-interest-context' />
+          <Heading
+            i18nKey='/heading/credits-and-deductions/had-car-loan-interest'
+            condition={{ operator: `isFalse`, condition: `/isFilingStatusMFJ` }}
+          />
+          <Heading i18nKey='/heading/credits-and-deductions/had-car-loan-interest-mfj' condition='/isFilingStatusMFJ' />
+          <DFModal i18nKey='/info/credits-and-deductions/car-loan-interest-details' />
+          <Boolean path='/hadCarLoanInterestPayments' />
+          <SaveAndOrContinueButton />
+        </Screen>
+        <Screen route='car-loan-is-qualified' condition='/hadCarLoanInterestPayments'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/car-loan-interest-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/car-loan-is-qualified' />
+          <InfoDisplay i18nKey='/info/credits-and-deductions/car-loan-qualified-details' />
+          <Boolean path='/carLoanIsQualified' />
+          <SaveAndOrContinueButton />
+        </Screen>
+        <Screen route='car-loan-interest-amount-primary' condition='/flowShowCarLoanInterestAmount'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/car-loan-interest-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/car-loan-interest-amount' />
+          <InfoDisplay i18nKey='/info/credits-and-deductions/car-loan-interest-amount-details' />
+          <Dollar path='/carLoanInterestAmountPrimary' />
+          <SaveAndOrContinueButton />
+        </Screen>
+        <Screen
+          route='car-loan-interest-amount-secondary'
+          conditions={[`/flowShowCarLoanInterestAmount`, `/isFilingStatusMFJ`]}
+        >
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/car-loan-interest-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/car-loan-interest-amount-spouse' />
+          <Dollar path='/carLoanInterestAmountSecondary' />
+          <SaveAndOrContinueButton />
+        </Screen>
+      </SubSubcategory>
+    </Gate>
+
+    {/* OBBBA: Trump Accounts (Form 4547) */}
+    <Gate condition='/flowShowTrumpAccountSection'>
+      <SubSubcategory route='trump-accounts-deduction'>
+        <Assertion
+          type='info'
+          i18nKey='dataviews./flow/credits-and-deductions/deductions.assertions./trumpAccountAdjustment'
+          conditions={[`/flowShowTrumpAccountAmount`, { operator: `isComplete`, condition: `/trumpAccountAdjustment` }]}
+        />
+        <Screen route='had-trump-account-contributions'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/trump-accounts-context' />
+          <Heading
+            i18nKey='/heading/credits-and-deductions/had-trump-account-contributions'
+            condition={{ operator: `isFalse`, condition: `/isFilingStatusMFJ` }}
+          />
+          <Heading
+            i18nKey='/heading/credits-and-deductions/had-trump-account-contributions-mfj'
+            condition='/isFilingStatusMFJ'
+          />
+          <DFModal i18nKey='/info/credits-and-deductions/trump-accounts-details' />
+          <Boolean path='/hadTrumpAccountContributions' />
+          <SaveAndOrContinueButton />
+        </Screen>
+        <Screen route='trump-account-children' condition='/flowShowTrumpAccountAmount'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/trump-accounts-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/trump-account-children' />
+          <InfoDisplay i18nKey='/info/credits-and-deductions/trump-account-children-details' />
+          <Dollar path='/trumpAccountNumberOfQualifyingChildren' />
+          <SaveAndOrContinueButton />
+        </Screen>
+        <Screen route='trump-account-amount' condition='/flowShowTrumpAccountAmount'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/trump-accounts-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/trump-account-amount' />
+          <InfoDisplay i18nKey='/info/credits-and-deductions/trump-account-amount-details' />
+          <Dollar path='/trumpAccountContributionAmount' />
+          <SaveAndOrContinueButton />
+        </Screen>
+      </SubSubcategory>
+    </Gate>
+
+    {/* OBBBA: 100% Bonus Depreciation (Schedule C line 13 stub) */}
+    <Gate condition={{ operator: `isFalseOrIncomplete`, condition: `/isMFJDependent` }}>
+      <SubSubcategory route='bonus-depreciation-deduction'>
+        <Assertion
+          type='info'
+          i18nKey='dataviews./flow/credits-and-deductions/deductions.assertions./bonusDepreciationDeduction'
+          conditions={[
+            `/hasQualifyingBonusDepreciation`,
+            { operator: `isComplete`, condition: `/bonusDepreciationDeduction` },
+          ]}
+        />
+        <Screen route='has-self-employment-income'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/bonus-depreciation-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/has-self-employment-income' />
+          <DFModal i18nKey='/info/credits-and-deductions/self-employment-income-details' />
+          <Boolean path='/hasSelfEmploymentIncome' />
+          <SaveAndOrContinueButton />
+        </Screen>
+        <Screen route='has-qualifying-bonus-depreciation' condition='/flowShowBonusDepreciationSection'>
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/bonus-depreciation-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/has-qualifying-bonus-depreciation' />
+          <InfoDisplay i18nKey='/info/credits-and-deductions/bonus-depreciation-details' />
+          <Boolean path='/hasQualifyingBonusDepreciation' />
+          <SaveAndOrContinueButton />
+        </Screen>
+        <Screen
+          route='bonus-depreciation-amount'
+          conditions={[`/flowShowBonusDepreciationSection`, `/hasQualifyingBonusDepreciation`]}
+        >
+          <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/bonus-depreciation-context' />
+          <Heading i18nKey='/heading/credits-and-deductions/bonus-depreciation-amount' />
+          <InfoDisplay i18nKey='/info/credits-and-deductions/bonus-depreciation-amount-details' />
+          <Dollar path='/bonusDepreciationAmount' />
+          <SaveAndOrContinueButton />
+        </Screen>
+      </SubSubcategory>
+    </Gate>
+
     <SubSubcategory route='standard-deduction' editable={false}>
       <Screen route='standard-deduction-intro' condition='/wantsStandardDeduction'>
         <IconDisplay name='InfoOutline' size={9} isCentered className='text-primary' />
@@ -511,6 +636,9 @@ export const DeductionsSubcategory = (
             { operator: `isComplete`, condition: `/hasHsaDeduction` },
             { operator: `isComplete`, condition: `/educatorExpensesAdjustment` },
             { operator: `isComplete`, condition: `/studentLoanInterestAdjustmentAmount` },
+            { operator: `isComplete`, condition: `/carLoanInterestAdjustment` },
+            { operator: `isComplete`, condition: `/trumpAccountAdjustment` },
+            { operator: `isComplete`, condition: `/bonusDepreciationDeduction` },
           ]}
         />
         <SaveAndOrContinueButton />
@@ -542,6 +670,18 @@ export const DeductionsSubcategory = (
               indent: true,
             },
             {
+              itemKey: `carLoanInterest`,
+              indent: true,
+            },
+            {
+              itemKey: `trumpAccounts`,
+              indent: true,
+            },
+            {
+              itemKey: `bonusDepreciation`,
+              indent: true,
+            },
+            {
               itemKey: `agi`,
               showTopBorder: true,
             },
@@ -568,6 +708,9 @@ export const DeductionsSubcategory = (
             { operator: `isComplete`, condition: `/hasHsaDeduction` },
             { operator: `isComplete`, condition: `/educatorExpensesAdjustment` },
             { operator: `isComplete`, condition: `/studentLoanInterestAdjustmentAmount` },
+            { operator: `isComplete`, condition: `/carLoanInterestAdjustment` },
+            { operator: `isComplete`, condition: `/trumpAccountAdjustment` },
+            { operator: `isComplete`, condition: `/bonusDepreciationDeduction` },
           ]}
         />
         <SetFactAction path='/flowHasSeenDeductions' source='/flowTrue' />

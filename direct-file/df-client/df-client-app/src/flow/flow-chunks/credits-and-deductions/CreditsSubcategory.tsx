@@ -33,6 +33,7 @@ import { SaversCreditSubSubcategory, SaversCreditDisqualifyingItems } from './Sa
 import { CtcOdcSubSubcategory, CtcDisqualifyingItems, OdcDisqualifyingItems } from './CtcOdcSubSubcategory.js';
 import { CdccSubSubcategory, CdccDisqualifyingItems } from './CdccSubSubcategory.js';
 import { EitcSubSubcategory, EitcDisqualifyingItems } from './EitcSubSubcategory.js';
+import { AdoptionCreditSubSubcategory, AdoptionCreditDisqualifyingItems } from './AdoptionCreditSubSubcategory.js';
 import { ItemConfig } from '../../../components/ConditionalList/ConditionalList.js';
 
 const PtcDisqualifyingItems: ItemConfig[] = [
@@ -172,6 +173,7 @@ const CreditsDisqualificationAccordion = (
       ...CtcDisqualifyingItems,
       ...OdcDisqualifyingItems,
       ...EitcDisqualifyingItems,
+      ...AdoptionCreditDisqualifyingItems,
     ]}
   />
 );
@@ -202,6 +204,11 @@ const CreditsSummaryRefundableItems: SummaryListItemConfig[] = [
     itemKey: `eitc`,
     indent: true,
     conditions: [`/eitcQualified`],
+  },
+  {
+    itemKey: `adoptionCredit`,
+    indent: true,
+    conditions: [`/qualifiedForAdoptionCredit`],
   },
   {
     itemKey: `total`,
@@ -2309,6 +2316,9 @@ export const CreditsSubcategory = (
       {/* Earned Income Tax Credit (EITC) */}
       {EitcSubSubcategory}
 
+      {/* OBBBA Adoption Credit (refundable) */}
+      {AdoptionCreditSubSubcategory}
+
       {/* Credit Summary */}
       <SubSubcategory route='summary-of-credits' editable={false} borderStyle='heavy'>
         <Gate condition='/creditsSectionComplete'>
@@ -2355,6 +2365,7 @@ export const CreditsSubcategory = (
             <Dollar path='/totalCtc' condition='/ctcQualified' displayOnlyOn='data-view' />
             <Dollar path='/additionalCtc' condition='/ctcQualified' displayOnlyOn='data-view' />
             <Dollar path='/earnedIncomeCredit' condition='/eitcQualified' displayOnlyOn='data-view' />
+            <Dollar path='/adoptionCreditAmount' condition='/qualifiedForAdoptionCredit' displayOnlyOn='data-view' />
             <Dollar
               path='/ptcAmountOwedDisplayedAsZero'
               condition={{ operator: `isFalse`, condition: `/needsToFileForm8962` }}

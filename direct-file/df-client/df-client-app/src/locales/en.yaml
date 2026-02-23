@@ -1619,6 +1619,7 @@ headings:
     dependent on their {{/taxYear}} federal tax return.
   /heading/credits-and-deductions/student-loans-not-qualified-loans-not-qualified:
     Based on your answers, you can’t deduct student loan interest because your loans don’t qualify.
+
   /heading/credits-and-deductions/deduction-choice-context: Deduction choice
   /heading/credits-and-deductions/deduction-choice: Would you like to take the standard deduction?
   /heading/credits-and-deductions/itemized-deductions-context: Itemized deductions
@@ -1635,6 +1636,38 @@ headings:
   /heading/credits-and-deductions/itemized-charity-carryover: Do you have charitable contribution carryover from a prior year?
   /heading/credits-and-deductions/itemized-other: Do you have any other itemized deductions?
   /heading/credits-and-deductions/itemized-summary: Here's a summary of your itemized deductions
+  # OBBBA: Car Loan Interest Deduction
+  /heading/credits-and-deductions/car-loan-interest-context: Car loan interest deduction
+  /heading/credits-and-deductions/had-car-loan-interest:
+    Did you pay interest on a qualifying car loan in {{/taxYear}}?
+  /heading/credits-and-deductions/had-car-loan-interest-mfj:
+    Did you or {{/secondaryFiler/firstName}} pay interest on a qualifying car loan in {{/taxYear}}?
+  /heading/credits-and-deductions/car-loan-is-qualified: Does your car loan meet the qualification requirements?
+  /heading/credits-and-deductions/car-loan-interest-amount:
+    How much car loan interest did you pay in {{/taxYear}}?
+  /heading/credits-and-deductions/car-loan-interest-amount-spouse:
+    How much car loan interest did {{/secondaryFiler/firstName}} pay in {{/taxYear}}?
+
+  # OBBBA: Trump Accounts (Form 4547)
+  /heading/credits-and-deductions/trump-accounts-context: Trump Account deduction
+  /heading/credits-and-deductions/had-trump-account-contributions:
+    Did you make contributions to a Trump Account (Form 4547) in {{/taxYear}}?
+  /heading/credits-and-deductions/had-trump-account-contributions-mfj:
+    Did you or {{/secondaryFiler/firstName}} make contributions to a Trump Account (Form 4547) in {{/taxYear}}?
+  /heading/credits-and-deductions/trump-account-children:
+    How many qualifying children did you make Trump Account contributions for?
+  /heading/credits-and-deductions/trump-account-amount:
+    What was the total amount you contributed to Trump Accounts in {{/taxYear}}?
+
+  # OBBBA: 100% Bonus Depreciation (Schedule C line 13 stub)
+  /heading/credits-and-deductions/bonus-depreciation-context: Bonus depreciation
+  /heading/credits-and-deductions/has-self-employment-income:
+    Did you have self-employment income in {{/taxYear}}?
+  /heading/credits-and-deductions/has-qualifying-bonus-depreciation:
+    Did you place qualifying business assets in service in {{/taxYear}}?
+  /heading/credits-and-deductions/bonus-depreciation-amount:
+    What was the total cost of qualifying business assets placed in service?
+
   /heading/credits-and-deductions/standard-deduction-intro-context: Standard deduction
   /heading/credits-and-deductions/standard-deduction-intro:
     helpText:
@@ -2170,6 +2203,17 @@ headings:
   /heading/credits-and-deductions/credits/eitc-qc-confirmation: >-
     We’ll add {{/familyAndHousehold/*/fullName}} to your {{/taxYear}} federal tax return as your qualifying child for
     the Earned Income Tax Credit.
+  # OBBBA: Adoption Credit
+  /heading/credits-and-deductions/credits/adoption-credit-context: Adoption credit
+  /heading/credits-and-deductions/credits/had-qualifying-adoption:
+    Did you finalize a qualifying adoption in {{/taxYear}}?
+  /heading/credits-and-deductions/credits/had-qualifying-adoption-mfj:
+    Did you or {{/secondaryFiler/firstName}} finalize a qualifying adoption in {{/taxYear}}?
+  /heading/credits-and-deductions/credits/adoption-credit-children:
+    How many children did you adopt in {{/taxYear}}?
+  /heading/credits-and-deductions/credits/adoption-credit-expenses:
+    What were your total qualified adoption expenses?
+
   /heading/credits-and-deductions/credits/credit-summary-qualified:
     Let’s review your credits and see how they change your taxes.
   /heading/credits-and-deductions/credits/eitc-combat-pay-change/primary-filer-has-combat-pay:
@@ -11313,6 +11357,33 @@ info:
       total:
         th: Nonrefundable credits
         td: "= {{/nonRefundableCredits}}"
+  # OBBBA: Adoption Credit info/modal keys
+  /info/credits-and-deductions/credits/adoption-credit-details:
+    helpText:
+      modals:
+        text: >-
+          <LinkModal1>What is the OBBBA Adoption Credit?</LinkModal1>
+        LinkModal1:
+          header: What is the OBBBA Adoption Credit?
+          body:
+            - p: >-
+                Under OBBBA, you may claim a refundable credit of up to $5,000 per qualifying child adopted
+                during the tax year. This credit covers qualified adoption expenses.
+            - p: >-
+                A qualifying adoption includes both domestic and international adoptions finalized during
+                the tax year.
+  /info/credits-and-deductions/credits/adoption-credit-children-details:
+    body:
+      - p: >-
+          Enter the number of children whose adoptions were finalized in {{/taxYear}}. You can claim up to $5,000
+          per child adopted.
+  /info/credits-and-deductions/credits/adoption-credit-expenses-details:
+    body:
+      - p: >-
+          Enter the total qualified adoption expenses you paid in {{/taxYear}}. This includes court costs,
+          attorney fees, travel expenses, and other expenses directly related to the legal adoption.
+      - p: Your credit will be the lesser of your actual expenses or $5,000 per qualifying child.
+
   /info/credits-and-deductions/credits/summary-refundable:
     sections:
       caption: Refundable credits
@@ -11356,6 +11427,9 @@ info:
                 Earned Income Tax Credit<br /><sharedModalEitcCalculated>How was my Earned Income Tax Credit
                 calculated?</sharedModalEitcCalculated>
         td: "{{/earnedIncomeCredit}}"
+      adoptionCredit:
+        th: OBBBA Adoption Credit
+        td: "{{/adoptionCreditAmount}}"
       total:
         th: Refundable credits
         td: "= {{/totalOtherPaymentsRefundableCredits}}"
@@ -14180,6 +14254,10 @@ info:
       text: >-
         You don’t qualify this year because the distribution(s) you and {{/secondaryFiler/firstName}} received were
         equal to or greater than your contributions in {{/taxYear}}.
+    subListAdoption: <strong>OBBBA Adoption Credit</strong>
+    subListAdoption-noQualifyingAdoption:
+      text: >-
+        You don't qualify this year because you didn't finalize a qualifying adoption in {{/taxYear}}.
   /info/credits-and-deductions/credits/intro-no-credits/dont-qualify-mfj-dep:
     heading: Credits you don’t qualify for
     body:
@@ -16352,6 +16430,7 @@ info:
                 from your loan servicer. Contact your loan servicer to find out the exact amount of interest paid during
                 the year.
             - p: For more information, refer to <Link1>Publication 970</Link1>.
+
   /info/credits-and-deductions/deduction-choice-details:
     body:
       - p: >-
@@ -16437,6 +16516,80 @@ info:
     charity: "Gifts to charity: {{/scheduleA/totalCharityDeduction}}"
     other: "Other deductions: {{/scheduleA/otherItemizedDeductions}}"
     total: "Total itemized deductions: {{/scheduleA/totalItemizedDeductions}}"
+  # OBBBA: Car Loan Interest Deduction
+  /info/credits-and-deductions/car-loan-interest-details:
+    helpText:
+      modals:
+        text: >-
+          <LinkModal1>What is a qualifying car loan?</LinkModal1>
+        LinkModal1:
+          header: What is a qualifying car loan?
+          body:
+            - p: >-
+                Under OBBBA, you can deduct interest paid on a car loan if the vehicle was manufactured or
+                assembled in the United States and the loan was originated by a US-based lender.
+            - p: You can deduct up to $10,000 in car loan interest per person per year.
+  /info/credits-and-deductions/car-loan-qualified-details:
+    body:
+      - p: "To qualify, your car loan must meet all of these requirements:"
+      - ul:
+          - li: The vehicle was manufactured or assembled in the United States
+          - li: The loan was originated by a US-based lender
+          - li: The vehicle was purchased for personal use
+  /info/credits-and-deductions/car-loan-interest-amount-details:
+    body:
+      - p: >-
+          Enter the total interest you paid on qualifying car loans in {{/taxYear}}. This may be reported by
+          your lender on your annual statement. You can deduct up to $10,000.
+
+  # OBBBA: Trump Accounts (Form 4547)
+  /info/credits-and-deductions/trump-accounts-details:
+    helpText:
+      modals:
+        text: >-
+          <LinkModal1>What is a Trump Account?</LinkModal1>
+        LinkModal1:
+          header: What is a Trump Account?
+          body:
+            - p: >-
+                Trump Accounts are tax-advantaged savings accounts created under OBBBA for children under 18.
+                Contributions of up to $5,000 per qualifying child per year are deductible.
+            - p: Contributions must be reported on Form 4547.
+  /info/credits-and-deductions/trump-account-children-details:
+    body:
+      - p: >-
+          Enter the number of qualifying children (under age 18) for whom you made Trump Account
+          contributions. You can deduct up to $5,000 per child.
+  /info/credits-and-deductions/trump-account-amount-details:
+    body:
+      - p: >-
+          Enter the total amount you contributed to Trump Accounts in {{/taxYear}} as reported on
+          Form 4547. Your deduction will be limited to $5,000 per qualifying child.
+
+  # OBBBA: 100% Bonus Depreciation (Schedule C stub)
+  /info/credits-and-deductions/self-employment-income-details:
+    helpText:
+      modals:
+        text: >-
+          <LinkModal1>What counts as self-employment income?</LinkModal1>
+        LinkModal1:
+          header: What counts as self-employment income?
+          body:
+            - p: >-
+                Self-employment income includes income from operating a business as a sole proprietor,
+                independent contractor income, or freelance income.
+  /info/credits-and-deductions/bonus-depreciation-details:
+    body:
+      - p: >-
+          Under OBBBA, you can deduct 100% of the cost of qualifying business assets placed in service
+          during the tax year. This applies to new and used qualifying property.
+  /info/credits-and-deductions/bonus-depreciation-amount-details:
+    body:
+      - p: >-
+          Enter the total cost of qualifying business assets you placed in service in {{/taxYear}}.
+          Under the OBBBA 100% bonus depreciation provision, you can deduct the full cost in the year
+          the assets were placed in service.
+
   /info/credits-and-deductions/standard-deduction-intro-details:
     body:
       - p: "This amount is based on:"
@@ -16482,6 +16635,9 @@ info:
                     - li: Health Savings Account (HSA) deduction
                     - li: Educator expense deduction
                     - li: Student loan interest deduction
+                    - li: Car loan interest deduction (OBBBA)
+                    - li: Trump Account deduction (OBBBA)
+                    - li: Bonus depreciation (OBBBA)
                 - p: >-
                     There may be other adjustments you qualify for, but we’re only supporting a limited number of
                     adjustments in Direct File this year.
@@ -16497,6 +16653,15 @@ info:
       studentLoans:
         th: Student loan interest deduction
         td: "-{{/studentLoanInterestAdjustmentAmount}}"
+      carLoanInterest:
+        th: Car loan interest deduction (OBBBA)
+        td: "-{{/carLoanInterestAdjustment}}"
+      trumpAccounts:
+        th: Trump Account deduction (OBBBA)
+        td: "-{{/trumpAccountAdjustment}}"
+      bonusDepreciation:
+        th: Bonus depreciation (OBBBA)
+        td: "-{{/bonusDepreciationDeduction}}"
       agi:
         th:
           helpText:
@@ -24249,6 +24414,13 @@ dataviews:
         You qualify for an Earned Income Tax Credit of {{/earnedIncomeCredit}} in {{/taxYear}} with 1 qualifying child.
       eitcQualifiedNoChildren: You qualify for an Earned Income Tax Credit of {{/earnedIncomeCredit}} in {{/taxYear}}.
       eitcNotQualified: You don’t qualify for the Earned Income Tax Credit in {{/taxYear}}.
+      adoptionCreditQualified:
+        You qualify for the OBBBA Adoption Credit of {{/adoptionCreditAmount}} in {{/taxYear}}.
+    /hadQualifyingAdoption: Did you finalize a qualifying adoption in {{/taxYear}}?
+    /hadQualifyingAdoption_spouse:
+      Did you or {{/secondaryFiler/firstName}} finalize a qualifying adoption in {{/taxYear}}?
+    /adoptionCreditNumberOfChildren: Number of children adopted in {{/taxYear}}
+    /adoptionCreditQualifiedExpenses: Total qualified adoption expenses
     /dependentTpSelfEnrolled:
       At any point in {{/taxYear}}, did you enroll yourself in a Marketplace health plan that qualifies for the Premium
       Tax Credit (PTC)?
@@ -24648,6 +24820,7 @@ dataviews:
     /studentLoanInterestAmount: Amount of student loan interest that you paid in {{/taxYear}}
     /studentLoanInterestAmount_spouse:
       Amount of student loan interest that you and {{/secondaryFiler/firstName}} paid in {{/taxYear}}
+
     /wantsStandardDeduction: Deduction choice
     /scheduleA/medicalExpenses: Medical and dental expenses
     /scheduleA/stateTaxesPaid: State and local income taxes
@@ -24661,6 +24834,20 @@ dataviews:
     /scheduleA/charityNonCash: Non-cash charitable contributions
     /scheduleA/charityCarryover: Charitable contribution carryover
     /scheduleA/otherItemizedDeductions: Other itemized deductions
+    /hadCarLoanInterestPayments: Did you pay interest on a qualifying car loan in {{/taxYear}}?
+    /hadCarLoanInterestPayments_spouse:
+      Did you or {{/secondaryFiler/firstName}} pay interest on a qualifying car loan in {{/taxYear}}?
+    /carLoanIsQualified: Does your car loan meet the qualification requirements?
+    /carLoanInterestAmountPrimary: Amount of car loan interest you paid in {{/taxYear}}
+    /carLoanInterestAmountSecondary: Amount of car loan interest {{/secondaryFiler/firstName}} paid in {{/taxYear}}
+    /hadTrumpAccountContributions: Did you make contributions to a Trump Account in {{/taxYear}}?
+    /hadTrumpAccountContributions_spouse:
+      Did you or {{/secondaryFiler/firstName}} make contributions to a Trump Account in {{/taxYear}}?
+    /trumpAccountNumberOfQualifyingChildren: Number of qualifying children for Trump Accounts
+    /trumpAccountContributionAmount: Total Trump Account contributions in {{/taxYear}}
+    /hasSelfEmploymentIncome: Did you have self-employment income in {{/taxYear}}?
+    /hasQualifyingBonusDepreciation: Did you place qualifying business assets in service in {{/taxYear}}?
+    /bonusDepreciationAmount: Total cost of qualifying business assets placed in service
     /standardDeduction: Your standard deduction amount
     /taxableIncome: Your taxable income amount
     assertions:
@@ -24684,6 +24871,12 @@ dataviews:
       /hsaDeductionAmountBoth:
         In determining your taxable income, you’ll deduct {{/bothFilersHsaNonEmployerContributionsTotal}} in HSA
         contributions.
+      /carLoanInterestAdjustment:
+        You’ll deduct {{/carLoanInterestAdjustment}} in car loan interest from your taxable income.
+      /trumpAccountAdjustment:
+        You’ll deduct {{/trumpAccountAdjustment}} in Trump Account contributions from your taxable income.
+      /bonusDepreciationDeduction:
+        You’ll deduct {{/bonusDepreciationDeduction}} in bonus depreciation from your taxable income.
     enums:
       /k12EducatorOptions:
         tpDid: Yes, I worked as a K–12 educator in {{/taxYear}}

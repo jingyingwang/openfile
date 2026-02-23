@@ -1,0 +1,117 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- OBBBA Trump Accounts (Form 4547) — Schedule 1 integration -->
+    <!-- Tax-advantaged savings accounts for children under 18 -->
+    <!-- Contributions up to $5,000/year are deductible as a Schedule 1 adjustment -->
+    <!-- For MFJ, each filer may contribute up to $5,000 per qualifying child -->
+
+    <Fact path="/maxTrumpAccountContributionPerChild">
+      <Description>Maximum Trump Account contribution deduction per qualifying child for TY2025</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>5000</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/hadTrumpAccountContributions">
+      <Name>Had Trump Account contributions</Name>
+      <Description>Whether the taxpayer made contributions to a Trump Account (Form 4547) in the tax year</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/flowShowTrumpAccountSection">
+      <Description>Whether to show the Trump Account section</Description>
+      <Derived>
+        <Not>
+          <Dependency module="filingStatus" path="/isMFJDependent" />
+        </Not>
+      </Derived>
+    </Fact>
+
+    <Fact path="/flowShowTrumpAccountAmount">
+      <Description>Whether to show the Trump Account contribution amount input</Description>
+      <Derived>
+        <Dependency path="/hadTrumpAccountContributions" />
+      </Derived>
+    </Fact>
+
+    <Fact path="/trumpAccountContributionAmount">
+      <Name>Trump Account contribution amount</Name>
+      <Description>Total contributions made to Trump Accounts in the tax year. The taxpayer should
+        report the total from Form 4547.</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/trumpAccountNumberOfQualifyingChildren">
+      <Name>Number of qualifying children for Trump Accounts</Name>
+      <Description>Number of qualifying children (under 18) for whom Trump Account contributions were made</Description>
+      <Writable>
+        <Int />
+      </Writable>
+    </Fact>
+
+    <Fact path="/trumpAccountMaxDeduction">
+      <Description>Maximum Trump Account deduction based on number of qualifying children</Description>
+      <Derived>
+        <Multiply>
+          <Dependency path="/maxTrumpAccountContributionPerChild" />
+          <Dependency path="/trumpAccountNumberOfQualifyingChildren" />
+        </Multiply>
+      </Derived>
+    </Fact>
+
+    <Fact path="/trumpAccountAdjustment">
+      <Name>Trump Account Adjustment</Name>
+      <Description>Trump Account deduction for Schedule 1. Lesser of actual contributions or maximum based on qualifying children.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency path="/flowShowTrumpAccountAmount" />
+            </When>
+            <Then>
+              <Round>
+                <LesserOf>
+                  <Dependency path="/trumpAccountContributionAmount" />
+                  <Dependency path="/trumpAccountMaxDeduction" />
+                </LesserOf>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form4547Included">
+      <Name>Form 4547 Included</Name>
+      <Description>Whether Form 4547 (Trump Accounts) is included with the return</Description>
+      <Export mef="true" />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Dependency path="/trumpAccountAdjustment" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>

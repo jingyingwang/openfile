@@ -1,0 +1,111 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- OBBBA Adoption Credit — $5,000 refundable credit per qualifying adoption -->
+    <!-- This is a REFUNDABLE credit added by OBBBA legislation -->
+    <!-- No income phaseout for the OBBBA adoption credit -->
+
+    <Fact path="/maxAdoptionCreditPerChild">
+      <Description>Maximum OBBBA adoption credit per qualifying child for TY2025</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>5000</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/hadQualifyingAdoption">
+      <Name>Had qualifying adoption</Name>
+      <Description>Whether the taxpayer finalized a qualifying adoption in the tax year</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/flowShowAdoptionCreditSection">
+      <Description>Whether to show the adoption credit section</Description>
+      <Derived>
+        <Not>
+          <Dependency module="filingStatus" path="/isMFJDependent" />
+        </Not>
+      </Derived>
+    </Fact>
+
+    <Fact path="/adoptionCreditNumberOfChildren">
+      <Name>Number of children adopted</Name>
+      <Description>Number of qualifying children adopted in the tax year</Description>
+      <Writable>
+        <Int />
+      </Writable>
+    </Fact>
+
+    <Fact path="/adoptionCreditQualifiedExpenses">
+      <Name>Qualified adoption expenses</Name>
+      <Description>Total qualified adoption expenses paid in the tax year</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/adoptionCreditMaxAmount">
+      <Description>Maximum adoption credit based on number of qualifying children</Description>
+      <Derived>
+        <Multiply>
+          <Dependency path="/maxAdoptionCreditPerChild" />
+          <Dependency path="/adoptionCreditNumberOfChildren" />
+        </Multiply>
+      </Derived>
+    </Fact>
+
+    <Fact path="/adoptionCreditAmount">
+      <Name>OBBBA Adoption Credit Amount</Name>
+      <Description>Adoption credit amount: lesser of qualified expenses or max credit. This is a refundable credit.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency path="/hadQualifyingAdoption" />
+            </When>
+            <Then>
+              <Round>
+                <LesserOf>
+                  <Dependency path="/adoptionCreditQualifiedExpenses" />
+                  <Dependency path="/adoptionCreditMaxAmount" />
+                </LesserOf>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/qualifiedForAdoptionCredit">
+      <Name>Qualified for adoption credit</Name>
+      <Description>Whether the taxpayer qualified for the OBBBA adoption credit</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <All>
+          <Dependency path="/hadQualifyingAdoption" />
+          <GreaterThan>
+            <Left>
+              <Dependency path="/adoptionCreditAmount" />
+            </Left>
+            <Right>
+              <Dollar>0</Dollar>
+            </Right>
+          </GreaterThan>
+        </All>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>
