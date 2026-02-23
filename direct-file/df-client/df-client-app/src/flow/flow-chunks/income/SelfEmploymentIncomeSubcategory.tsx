@@ -75,11 +75,11 @@ export const SelfEmploymentIncomeSubcategory = (
       collection='/scheduleCBusinesses'
       collectionItemCompletedCondition='/scheduleCBusinesses/*/isComplete'
       donePath='/scheduleCBusinessesIsDone'
-      iconName='Business'
+      iconName='Work'
       dataViewSections={[
         {
           i18nKey: `dataviews./flow/income/self-employment.primaryFilerBusinesses`,
-          condition: `/scheduleCBusinesses/*/filer/isPrimaryFiler`,
+          condition: { operator: `isFalse`, condition: `/scheduleCBusinesses/*/belongsToSecondaryFiler` },
         },
         {
           i18nKey: `dataviews./flow/income/self-employment.secondaryFilerBusinesses`,
@@ -87,7 +87,6 @@ export const SelfEmploymentIncomeSubcategory = (
         },
       ]}
     >
-      {/* === Business Info === */}
       <SubSubcategory route='schedule-c-business-info'>
         <Screen route='schedule-c-whose-business' condition='/isFilingStatusMFJ'>
           <Heading i18nKey='/heading/income/self-employment/whose-business' />
@@ -98,7 +97,7 @@ export const SelfEmploymentIncomeSubcategory = (
             condition='/scheduleCBusinesses/*/secondaryFilerUsedWithoutMFJ'
           />
           <CollectionItemReference path='/scheduleCBusinesses/*/filer' displayOnlyOn='edit' />
-          <GenericString path='/scheduleCBusinesses/*/filer/fullName' displayOnlyOn='data-view' />
+          <GenericString path='/scheduleCBusinesses/*/businessName' displayOnlyOn='data-view' />
           <SaveAndOrContinueButton />
         </Screen>
         <Screen route='schedule-c-business-name'>
@@ -141,7 +140,6 @@ export const SelfEmploymentIncomeSubcategory = (
         </Screen>
       </SubSubcategory>
 
-      {/* === Income === */}
       <SubSubcategory route='schedule-c-income'>
         <Screen route='schedule-c-gross-receipts'>
           <Heading i18nKey='/heading/income/self-employment/gross-receipts' />
@@ -165,7 +163,6 @@ export const SelfEmploymentIncomeSubcategory = (
         </Screen>
       </SubSubcategory>
 
-      {/* === Expenses === */}
       <SubSubcategory route='schedule-c-expenses'>
         <Screen route='schedule-c-expenses-intro'>
           <Heading i18nKey='/heading/income/self-employment/expenses-intro' />

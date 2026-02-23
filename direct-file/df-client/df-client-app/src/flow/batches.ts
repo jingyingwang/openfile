@@ -359,6 +359,16 @@ export const CONTENT_BATCHES = {
     status: BatchStatus.COMPLETE,
     started: ``,
   },
+  'form-1099k-0': {
+    type: BatchType.CONTENT,
+    status: BatchStatus.WIP,
+    started: ``,
+  },
+  'form-1099da-0': {
+    type: BatchType.CONTENT,
+    status: BatchStatus.WIP,
+    started: ``,
+  },
 } as const satisfies ContentBatches;
 
 // Export list of our current content batches

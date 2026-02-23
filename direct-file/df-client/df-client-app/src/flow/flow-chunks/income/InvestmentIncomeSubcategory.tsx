@@ -59,7 +59,6 @@ export const InvestmentIncomeSubcategory = (
           <Heading i18nKey='/heading/income/investment/div-add-whose' />
           <InfoDisplay i18nKey='/info/income/investment/div-add-whose' />
           <CollectionItemReference path='/form1099DIVs/*/filer' displayOnlyOn='edit' />
-          <GenericString path='/form1099DIVs/*/filer/fullName' displayOnlyOn='data-view' />
           <SaveAndOrContinueButton />
         </Screen>
         <Screen route='div-add-payer'>
