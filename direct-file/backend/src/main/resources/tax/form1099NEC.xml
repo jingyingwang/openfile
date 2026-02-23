@@ -1,0 +1,281 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+    <!-- ===================== COLLECTION ===================== -->
+    <Fact path="/form1099NECs">
+      <Name>Form 1099-NEC</Name>
+      <Description>Form 1099-NEC: Nonemployee Compensation</Description>
+      <Writable>
+        <Collection />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/filer">
+      <Name>Recipient</Name>
+      <Description>The recipient of the 1099-NEC.</Description>
+      <Writable>
+        <CollectionItem collection="/filers" />
+      </Writable>
+      <Placeholder>
+        <Dependency module="filers" path="/primaryFiler" />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/belongsToSecondaryFiler">
+      <Description>Whether the 1099-NEC belongs to the secondary filer</Description>
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/secondaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== FORM FIELDS ===================== -->
+    <Fact path="/form1099NECs/*/payer">
+      <Name>Payer name</Name>
+      <Description>The payer name from the 1099-NEC.</Description>
+      <Export mef="true" />
+      <Writable>
+        <String />
+        <Limit type="Match">
+          <String><![CDATA[[\sA-Za-z0-9\-]+]]></String>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/payer/tin">
+      <Name>Payer TIN</Name>
+      <Description>The payer's TIN from the 1099-NEC.</Description>
+      <Export mef="true" />
+      <Writable>
+        <EIN />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/nonemployeeCompensation">
+      <Name>Nonemployee compensation</Name>
+      <Description>Box 1 of Form 1099-NEC: Nonemployee compensation.</Description>
+      <Export mef="true" />
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/federalTaxWithheld">
+      <Name>Federal income tax withheld</Name>
+      <Description>Box 4 of Form 1099-NEC: Federal income tax withheld.</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/federalTaxWithheldOrZero">
+      <Name>Federal income tax withheld (or zero)</Name>
+      <Description>Box 4 of Form 1099-NEC: Federal income tax withheld, defaulting to zero if not entered.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="../federalTaxWithheld" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency path="../federalTaxWithheld" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/federalTaxWithheldRounded">
+      <Name>Federal income tax withheld (rounded)</Name>
+      <Description>Box 4 of Form 1099-NEC: Federal income tax withheld, rounded.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Round>
+          <Dependency path="../federalTaxWithheldOrZero" />
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/hasFederalTaxWithheld">
+      <Name>Has federal tax withheld</Name>
+      <Description>Whether Box 4 has a nonzero value.</Description>
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Dependency path="../federalTaxWithheldOrZero" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== FLOW TRACKING ===================== -->
+    <Fact path="/form1099NECs/*/hasSeenLastAvailableScreen">
+      <Name>Has seen last available screen</Name>
+      <Description>Whether the user has seen the last available screen for this 1099-NEC.</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/isComplete">
+      <Name>Is complete</Name>
+      <Description>Whether the 1099-NEC is complete.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <All>
+                <IsComplete>
+                  <Dependency path="../nonemployeeCompensation" />
+                </IsComplete>
+                <Dependency path="../hasSeenLastAvailableScreen" />
+              </All>
+            </When>
+            <Then>
+              <True />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <False />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099NECs/*/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has 1099-NECs when primary filer is not filing jointly</Description>
+      <Derived>
+        <All>
+          <Not>
+            <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+          </Not>
+          <Dependency path="../belongsToSecondaryFiler" />
+        </All>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099NECs/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has 1099-NECs when primary filer is not filing jointly</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <Dependency path="/form1099NECs/*/secondaryFilerUsedWithoutMFJ" />
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== AGGREGATIONS ===================== -->
+    <Fact path="/has1099NEC">
+      <Name>Has 1099-NEC</Name>
+      <Description>Whether the TP has any 1099-NEC listed.</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <CollectionSize>
+              <Dependency path="/form1099NECs" />
+            </CollectionSize>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099NECTotalCompensation">
+      <Name>Total 1099-NEC compensation</Name>
+      <Description>Total nonemployee compensation from all 1099-NECs.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099NECs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099NECs/*/nonemployeeCompensation" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/form1099NECFederalTaxWithheld">
+      <Name>Form 1099-NEC federal tax withholdings</Name>
+      <Description>Total federal income tax withheld from Form 1099-NECs.</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/form1099NECs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/form1099NECs/*/federalTaxWithheldOrZero" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+  </Facts>
+</FactDictionaryModule>

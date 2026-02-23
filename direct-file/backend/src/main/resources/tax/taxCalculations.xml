@@ -2353,6 +2353,7 @@
           </CollectionSum>
           <Dependency module="form1099Misc" path="/form1099MiscFederalIncomeTaxWithheld" />
           <Dependency module="form1099Rs" path="/form1099RsFederalIncomeTaxWithheld" />
+          <Dependency module="form1099NEC" path="/form1099NECFederalTaxWithheld" />
         </Add>
       </Derived>
     </Fact>

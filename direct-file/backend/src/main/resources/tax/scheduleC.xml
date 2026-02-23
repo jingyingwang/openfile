@@ -1,0 +1,521 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+    <!-- ===================== COLLECTION ===================== -->
+    <Fact path="/scheduleCBusinesses">
+      <Name>Schedule C Businesses</Name>
+      <Description>Collection of Schedule C businesses (self-employment / sole proprietorships).</Description>
+      <Writable>
+        <Collection />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/filer">
+      <Name>Business owner</Name>
+      <Description>The filer who owns this business.</Description>
+      <Writable>
+        <CollectionItem collection="/filers" />
+      </Writable>
+      <Placeholder>
+        <Dependency module="filers" path="/primaryFiler" />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/belongsToSecondaryFiler">
+      <Description>Whether the business belongs to the secondary filer</Description>
+      <Derived>
+        <Equal>
+          <Left>
+            <Dependency path="../filer" />
+          </Left>
+          <Right>
+            <Dependency module="filers" path="/secondaryFiler" />
+          </Right>
+        </Equal>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== BUSINESS INFO ===================== -->
+    <Fact path="/scheduleCBusinesses/*/businessName">
+      <Name>Business name</Name>
+      <Description>Name of the business (Schedule C line A).</Description>
+      <Export mef="true" />
+      <Writable>
+        <String />
+        <Limit type="Match">
+          <String><![CDATA[[\sA-Za-z0-9\-&'.]+]]></String>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/principalBusinessCode">
+      <Name>Principal business code</Name>
+      <Description>6-digit NAICS code (Schedule C line B).</Description>
+      <Export mef="true" />
+      <Writable>
+        <String />
+        <Limit type="Match">
+          <String><![CDATA[\d{6}]]></String>
+        </Limit>
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/ein">
+      <Name>Employer ID number</Name>
+      <Description>Business EIN if applicable (Schedule C line D).</Description>
+      <Export mef="true" />
+      <Writable>
+        <EIN />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/hasEin">
+      <Name>Has EIN</Name>
+      <Description>Whether the business has an EIN.</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/accountingMethodOptions">
+      <Name>Accounting method options</Name>
+      <Description>Options for accounting method on Schedule C.</Description>
+      <Derived>
+        <EnumOptions>
+          <String>cash</String>
+          <String>accrual</String>
+        </EnumOptions>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/accountingMethod">
+      <Name>Accounting method</Name>
+      <Description>Cash, accrual, or other (Schedule C line F).</Description>
+      <Export mef="true" />
+      <Writable>
+        <Enum optionsPath="/accountingMethodOptions" />
+      </Writable>
+    </Fact>
+
+    <!-- ===================== INCOME (Part I) ===================== -->
+    <Fact path="/scheduleCBusinesses/*/grossReceipts">
+      <Name>Gross receipts or sales</Name>
+      <Description>Gross receipts or sales (Schedule C line 1).</Description>
+      <Export mef="true" />
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/returnsAndAllowances">
+      <Name>Returns and allowances</Name>
+      <Description>Returns and allowances (Schedule C line 2).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/costOfGoodsSold">
+      <Name>Cost of goods sold</Name>
+      <Description>Cost of goods sold (Schedule C line 4).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/grossIncome">
+      <Name>Gross income</Name>
+      <Description>Gross income = gross receipts - returns - COGS (Schedule C line 7).</Description>
+      <Derived>
+        <Round>
+          <Subtract>
+            <Minuend>
+              <Dependency path="../grossReceipts" />
+            </Minuend>
+            <Subtrahends>
+              <Dependency path="../returnsAndAllowances" />
+              <Dependency path="../costOfGoodsSold" />
+            </Subtrahends>
+          </Subtract>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== EXPENSES (Part II) ===================== -->
+    <Fact path="/scheduleCBusinesses/*/advertising">
+      <Name>Advertising</Name>
+      <Description>Advertising expenses (Schedule C line 8).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/carAndTruck">
+      <Name>Car and truck expenses</Name>
+      <Description>Car and truck expenses (Schedule C line 9).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/commissions">
+      <Name>Commissions and fees</Name>
+      <Description>Commissions and fees (Schedule C line 10).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/contractLabor">
+      <Name>Contract labor</Name>
+      <Description>Contract labor (Schedule C line 11).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/insurance">
+      <Name>Insurance</Name>
+      <Description>Insurance (other than health) (Schedule C line 15).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/legalAndProfessional">
+      <Name>Legal and professional services</Name>
+      <Description>Legal and professional services (Schedule C line 17).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/officeExpense">
+      <Name>Office expense</Name>
+      <Description>Office expense (Schedule C line 18).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/rent">
+      <Name>Rent or lease</Name>
+      <Description>Rent or lease of vehicles, machinery, equipment, or other business property (Schedule C line 20b).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/repairs">
+      <Name>Repairs and maintenance</Name>
+      <Description>Repairs and maintenance (Schedule C line 21).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/supplies">
+      <Name>Supplies</Name>
+      <Description>Supplies (Schedule C line 22).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/taxesAndLicenses">
+      <Name>Taxes and licenses</Name>
+      <Description>Taxes and licenses (Schedule C line 23).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/travel">
+      <Name>Travel</Name>
+      <Description>Travel expenses (Schedule C line 24a).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/meals">
+      <Name>Deductible meals</Name>
+      <Description>Deductible meals (Schedule C line 24b).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/utilities">
+      <Name>Utilities</Name>
+      <Description>Utilities (Schedule C line 25).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/otherExpenses">
+      <Name>Other expenses</Name>
+      <Description>Other expenses (Schedule C line 27a).</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <!-- ===================== DERIVED TOTALS ===================== -->
+    <Fact path="/scheduleCBusinesses/*/totalExpenses">
+      <Name>Total expenses</Name>
+      <Description>Total expenses before net profit (Schedule C line 28).</Description>
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency path="../advertising" />
+            <Dependency path="../carAndTruck" />
+            <Dependency path="../commissions" />
+            <Dependency path="../contractLabor" />
+            <Dependency path="../insurance" />
+            <Dependency path="../legalAndProfessional" />
+            <Dependency path="../officeExpense" />
+            <Dependency path="../rent" />
+            <Dependency path="../repairs" />
+            <Dependency path="../supplies" />
+            <Dependency path="../taxesAndLicenses" />
+            <Dependency path="../travel" />
+            <Dependency path="../meals" />
+            <Dependency path="../utilities" />
+            <Dependency path="../otherExpenses" />
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/netProfitOrLoss">
+      <Name>Net profit or loss</Name>
+      <Description>Net profit (or loss) = gross income - total expenses (Schedule C line 31).</Description>
+      <Export mef="true" />
+      <Derived>
+        <Round>
+          <Subtract>
+            <Minuend>
+              <Dependency path="../grossIncome" />
+            </Minuend>
+            <Subtrahends>
+              <Dependency path="../totalExpenses" />
+            </Subtrahends>
+          </Subtract>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== FLOW TRACKING ===================== -->
+    <Fact path="/scheduleCBusinesses/*/hasSeenLastAvailableScreen">
+      <Name>Has seen last available screen</Name>
+      <Description>Whether the user has seen the last available screen for this Schedule C business.</Description>
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/isComplete">
+      <Name>Is complete</Name>
+      <Description>Whether the Schedule C entry is complete.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <All>
+                <IsComplete>
+                  <Dependency path="../grossReceipts" />
+                </IsComplete>
+                <IsComplete>
+                  <Dependency path="../businessName" />
+                </IsComplete>
+                <Dependency path="../hasSeenLastAvailableScreen" />
+              </All>
+            </When>
+            <Then>
+              <True />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <False />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/*/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has businesses when primary filer is not filing jointly</Description>
+      <Derived>
+        <All>
+          <Not>
+            <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+          </Not>
+          <Dependency path="../belongsToSecondaryFiler" />
+        </All>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleCBusinesses/secondaryFilerUsedWithoutMFJ">
+      <Description>Whether secondary filer has businesses when primary filer is not filing jointly</Description>
+      <BlockSubmissionOnTrue />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Count>
+              <Dependency path="/scheduleCBusinesses/*/secondaryFilerUsedWithoutMFJ" />
+            </Count>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== AGGREGATIONS ===================== -->
+    <Fact path="/hasScheduleCBusinesses">
+      <Name>Has Schedule C businesses</Name>
+      <Description>Whether the taxpayer has any Schedule C businesses.</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <CollectionSize>
+              <Dependency path="/scheduleCBusinesses" />
+            </CollectionSize>
+          </Left>
+          <Right>
+            <Int>0</Int>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleCTotalNetProfit">
+      <Name>Schedule C total net profit or loss</Name>
+      <Description>Total net profit or loss from all Schedule C businesses, reported on Schedule 1 line 3.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency path="/scheduleCBusinesses" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Round>
+                <CollectionSum>
+                  <Dependency path="/scheduleCBusinesses/*/netProfitOrLoss" />
+                </CollectionSum>
+              </Round>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/hasScheduleCIncome">
+      <Name>Has Schedule C income</Name>
+      <Description>Whether the taxpayer has nonzero Schedule C net profit.</Description>
+      <Derived>
+        <Not>
+          <Equal>
+            <Left>
+              <Dependency path="/scheduleCTotalNetProfit" />
+            </Left>
+            <Right>
+              <Dollar>0</Dollar>
+            </Right>
+          </Equal>
+        </Not>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleCBusinessesIsDone">
+      <Description>The user has clicked "Done" for the Schedule C section.</Description>
+      <Export downstreamFacts="true" />
+      <Writable>
+        <Boolean />
+      </Writable>
+      <Placeholder>
+        <False />
+      </Placeholder>
+    </Fact>
+
+    <Fact path="/isScheduleCSectionComplete">
+      <Description>Whether the Schedule C section should be considered complete.</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <!-- Not self-employed (section can be considered complete) -->
+              <All>
+                <IsComplete>
+                  <Dependency path="/hasSelfEmploymentIncome" />
+                </IsComplete>
+                <Not>
+                  <Dependency path="/hasSelfEmploymentIncome" />
+                </Not>
+              </All>
+            </When>
+            <Then>
+              <True />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <!-- Has self-employment income and has completed the section -->
+              <All>
+                <IsComplete>
+                  <Dependency path="/hasSelfEmploymentIncome" />
+                </IsComplete>
+                <Dependency path="/hasSelfEmploymentIncome" />
+                <IsComplete>
+                  <Dependency path="/scheduleCBusinessesIsDone" />
+                </IsComplete>
+                <Dependency path="/scheduleCBusinessesIsDone" />
+              </All>
+            </When>
+            <Then>
+              <True />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <False />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Gateway question -->
+    <Fact path="/hasSelfEmploymentIncome">
+      <Name>Has self-employment income</Name>
+      <Description>Whether the taxpayer had freelance or self-employment income.</Description>
+      <Export downstreamFacts="true" />
+      <Writable>
+        <Boolean />
+      </Writable>
+    </Fact>
+  </Facts>
+</FactDictionaryModule>

@@ -11,6 +11,7 @@ import {
   RetirementIncomeSubcategory,
 } from './flow-chunks/income/RetirementIncomeSubcategory.js';
 import { AlaskaPermanentFundSubcategory } from './flow-chunks/income/AlaskaPermanentFundSubcategory.js';
+import { SelfEmploymentIncomeSubcategory } from './flow-chunks/income/SelfEmploymentIncomeSubcategory.js';
 import { JobIncomeSubcategory } from './flow-chunks/income/JobIncomeSubcategory.js';
 import { InterestIncomeSubcategory } from './flow-chunks/income/InterestIncomeSubcategory.js';
 import { UnemploymentIncomeSubcategory } from './flow-chunks/income/UnemploymentIncomeSubcategory.js';
@@ -57,6 +58,7 @@ const flowNodes = (
     <Category route='income'>
       {IncomeSourcesSubcategory}
       {JobIncomeSubcategory}
+      {SelfEmploymentIncomeSubcategory}
 
       {UnemploymentIncomeSubcategory}
       {InterestIncomeSubcategory}

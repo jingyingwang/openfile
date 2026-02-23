@@ -691,6 +691,7 @@
             <Dependency module="paymentMethod" path="/paymentSectionComplete" />
             <Dependency module="form1099Rs" path="/form1099RsIsComplete" />
             <Dependency module="form1099Misc" path="/isApfSectionComplete" />
+            <Dependency module="scheduleC" path="/isScheduleCSectionComplete" />
             <Dependency module="socialSecurity" path="/socialSecurityReportsIsDone" />
             <Dependency module="spouseSection" path="/spouseSectionCompleted" />
             <Dependency module="estimatedPayments" path="/estimatedTaxesIsComplete" />

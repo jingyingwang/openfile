@@ -750,6 +750,7 @@
                 <Dependency path="/hasOtherIncome" />
                 <Dependency path="/hasAdjustmentsToIncome" />
                 <Dependency module="unemployment" path="/receivedUnemploymentCompensation" />
+                <Dependency module="scheduleC" path="/hasScheduleCIncome" />
               </Any>
             </When>
             <Then>
@@ -782,6 +783,7 @@
       <Derived>
         <Round>
           <Add>
+            <Dependency module="scheduleC" path="/scheduleCTotalNetProfit" />
             <Dependency module="unemployment" path="/unemploymentCompensation" />
             <Dependency path="/schedule1TotalOtherIncome" />
           </Add>
@@ -822,6 +824,7 @@
           <Dependency module="cdcc" path="/hasReportedDependentCareBenefits" />
           <Dependency module="form1099Rs" path="/has1099R" />
           <Dependency module="socialSecurity" path="/hasSocialSecurityBenefits" />
+          <Dependency module="scheduleC" path="/hasScheduleCBusinesses" />
         </Any>
       </Derived>
     </Fact>
