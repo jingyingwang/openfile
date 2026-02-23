@@ -230,15 +230,12 @@ export const IncomeSourcesSubcategory = (
         <Boolean path='/disposedDigitalAssets' />
         <SaveAndOrContinueButton />
       </Screen>
-      <Screen
-        route='digital-assets-knockout'
-        condition={{ operator: `isFalse`, condition: `/notDigitalAssets` }}
-        isKnockout={true}
-      >
-        <IconDisplay name='ErrorOutline' size={9} isCentered />
-        <Heading i18nKey='/heading/knockout/digital-assets' />
-        <DFAlert i18nKey='/info/knockout/digital-assets' headingLevel='h3' type='warning' />
-        <KnockoutButton i18nKey='button.knockout' />
+      {/* Digital asset transactions are now supported via Form 8949 in the Investment Income section.
+          The knockout is removed — users who received/disposed digital assets proceed to report them. */}
+      <Screen route='digital-assets-info' condition={{ operator: `isFalse`, condition: `/notDigitalAssets` }}>
+        <Heading i18nKey='/heading/income/income-sources/digital-assets-info' />
+        <InfoDisplay i18nKey='/info/income/income-sources/digital-assets-info' />
+        <SaveAndOrContinueButton />
       </Screen>
     </SubSubcategory>
     <SubSubcategory route='iras'>

@@ -485,23 +485,59 @@
 
     <Fact path="/qualifiedDividends">
       <Name>Qualified Dividends</Name>
-      <Description>Qualified dividend income to report on line 3a of Form 1040.
-
-        OUT OF SCOPE</Description>
+      <Description>Qualified dividend income to report on line 3a of Form 1040.</Description>
+      <Export downstreamFacts="true" mef="true" />
 
       <Derived>
-        <Dollar>0</Dollar>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency module="form1099DIV" path="/form1099DIVs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency module="form1099DIV" path="/totalQualifiedDividends" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
       </Derived>
     </Fact>
 
     <Fact path="/ordinaryDividends">
       <Name>Ordinary dividends</Name>
-      <Description>Ordinary dividend income to report on line 3b of Form 1040.
-        OUT OF SCOPE</Description>
-      <Export downstreamFacts="true" />
+      <Description>Ordinary dividend income to report on line 3b of Form 1040.</Description>
+      <Export downstreamFacts="true" mef="true" />
 
       <Derived>
-        <Dollar>0</Dollar>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency module="form1099DIV" path="/form1099DIVs" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency module="form1099DIV" path="/totalOrdinaryDividends" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
       </Derived>
     </Fact>
 
@@ -685,23 +721,67 @@
 
     <Fact path="/capitalGainsScheduleDNotRequired">
       <Name>Capital Gains Schedule D Not Required</Name>
-      <Description>1040 checkbox to be marked when *nonzero* gain/loss is exempt from Schedule D requirement. Capital
-        gain/loss is always zero for our TY2023 scope. So, per W&amp;I counsel we should never mark this in TY 2023.
-        (Instructions on Form 1040 are poor; see instruction booklet p. 31)
+      <Description>1040 checkbox to be marked when *nonzero* gain/loss is exempt from Schedule D requirement.
+        Only marked when capital gain distributions are the only capital gains and no Form 8949 is needed.
       </Description>
+      <Export mef="true" />
       <Derived>
-        <False />
+        <All>
+          <Not>
+            <Dependency module="form8949" path="/hasForm8949Transactions" />
+          </Not>
+          <GreaterThan>
+            <Left>
+              <Dependency module="form1099DIV" path="/totalCapitalGainDistributions" />
+            </Left>
+            <Right>
+              <Dollar>0</Dollar>
+            </Right>
+          </GreaterThan>
+        </All>
       </Derived>
     </Fact>
 
     <Fact path="/capitalGainsOrLosses">
       <Name>Capital Gains or Losses</Name>
-      <Description>Total capital gains or losses for line 7 of the 1040
-
-        OUT OF SCOPE</Description>
-      <Export downstreamFacts="true" />
+      <Description>Total capital gains or losses for line 7 of the 1040. Comes from Schedule D.</Description>
+      <Export downstreamFacts="true" mef="true" />
       <Derived>
-        <Dollar>0</Dollar>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency module="scheduleD" path="/requiresScheduleD" />
+            </When>
+            <Then>
+              <Dependency module="scheduleD" path="/capitalGainOrLossFor1040" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/investmentIncomeIsComplete">
+      <Name>Investment income complete</Name>
+      <Description>Whether the investment income section is complete (1099-DIV and Form 8949 entry done).</Description>
+      <Export downstreamFacts="true" />
+
+      <Derived>
+        <All>
+          <IsComplete>
+            <Dependency module="form1099DIV" path="/form1099DIVsIsDone" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency module="form8949" path="/form8949TransactionsIsDone" />
+          </IsComplete>
+        </All>
       </Derived>
     </Fact>
 
@@ -822,6 +902,8 @@
           <Dependency module="cdcc" path="/hasReportedDependentCareBenefits" />
           <Dependency module="form1099Rs" path="/has1099R" />
           <Dependency module="socialSecurity" path="/hasSocialSecurityBenefits" />
+          <Dependency module="form1099DIV" path="/has1099DIV" />
+          <Dependency module="form8949" path="/hasForm8949Transactions" />
         </Any>
       </Derived>
     </Fact>
