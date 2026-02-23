@@ -189,21 +189,27 @@
 
     <Fact path="/qualifiedBusinessIncomeDeduction">
       <Name>Qualified business income deduction</Name>
-      <Description>Qualified business income deductions for line 13 of Form 1040</Description>
+      <Description>Qualified business income deductions for line 13 of Form 1040.
+        Computed via simplified Form 8995 when taxable income is under thresholds.</Description>
+      <Export mef="true" />
+      <ExportZero />
       <Derived>
-        <Dollar>0</Dollar>
+        <Dependency module="form8995" path="/qbiDeduction" />
       </Derived>
     </Fact>
 
     <Fact path="/totalDeductions">
       <Name>Total deductions</Name>
-      <Description>Total deductions as reported on line 14 of Form 1040.</Description>
+      <Description>Total deductions as reported on line 14 of Form 1040.
+        Sum of standard or itemized deductions (line 12) and qualified business
+        income deduction (line 13).</Description>
       <Export mef="true" />
 
       <Derived>
         <Round>
           <Add>
             <Dependency path="/standardOrItemizedDeductions" />
+            <Dependency path="/qualifiedBusinessIncomeDeduction" />
           </Add>
         </Round>
       </Derived>

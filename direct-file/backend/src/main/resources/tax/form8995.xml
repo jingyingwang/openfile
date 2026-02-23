@@ -1,0 +1,240 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<!-- Form 8995: Qualified Business Income Deduction Simplified Computation
+     Used when taxable income before QBI deduction is at or below $191,950
+     ($383,900 if MFJ). For income above thresholds, Form 8995-A would be
+     required (not yet supported — deduction is $0 in that case). -->
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- ===================== QBI SOURCE ===================== -->
+
+    <Fact path="/totalQualifiedBusinessIncome">
+      <Name>Total qualified business income</Name>
+      <Description>Total QBI from all qualified trades or businesses (Form 8995 line 2).
+        For this simplified implementation, QBI equals Schedule C total net profit.
+        If the total is negative, treat as zero (losses carry forward but are not
+        deductible via Form 8995 in the current year).</Description>
+      <Export mef="true" />
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <GreaterThan>
+                <Left>
+                  <Dependency module="scheduleC" path="/scheduleCTotalNetProfit" />
+                </Left>
+                <Right>
+                  <Dollar>0</Dollar>
+                </Right>
+              </GreaterThan>
+            </When>
+            <Then>
+              <Dependency module="scheduleC" path="/scheduleCTotalNetProfit" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== QBI COMPONENT (20%) ===================== -->
+
+    <Fact path="/qbiComponent">
+      <Name>QBI component</Name>
+      <Description>20% of total QBI (Form 8995 line 3).</Description>
+      <Derived>
+        <Round>
+          <Multiply>
+            <Rational>20/100</Rational>
+            <Dependency path="/totalQualifiedBusinessIncome" />
+          </Multiply>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== TAXABLE INCOME BEFORE QBI ===================== -->
+
+    <Fact path="/taxableIncomeBeforeQBI">
+      <Name>Taxable income before QBI deduction</Name>
+      <Description>Form 1040 line 11 (AGI) minus line 12 (standard or itemized deductions),
+        before the QBI deduction is applied (Form 8995 line 4).</Description>
+      <Derived>
+        <Subtract>
+          <Minuend>
+            <Dependency module="taxCalculations" path="/agi" />
+          </Minuend>
+          <Subtrahends>
+            <Dependency module="taxCalculations" path="/standardOrItemizedDeductions" />
+          </Subtrahends>
+        </Subtract>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== INCOME LIMITATION ===================== -->
+
+    <Fact path="/taxableIncomeBeforeQBIFloored">
+      <Name>Taxable income before QBI (floored at zero)</Name>
+      <Description>Taxable income before QBI deduction, but not less than zero.
+        Used for the 20% income limitation calculation (Form 8995 line 6).</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <GreaterThan>
+                <Left>
+                  <Dependency path="/taxableIncomeBeforeQBI" />
+                </Left>
+                <Right>
+                  <Dollar>0</Dollar>
+                </Right>
+              </GreaterThan>
+            </When>
+            <Then>
+              <Dependency path="/taxableIncomeBeforeQBI" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/incomeLimitation">
+      <Name>Income limitation</Name>
+      <Description>20% of taxable income before QBI deduction, minus net capital gain
+        (Form 8995 lines 5-7). Net capital gain is stubbed to $0.</Description>
+      <Derived>
+        <Round>
+          <Multiply>
+            <Rational>20/100</Rational>
+            <Dependency path="/taxableIncomeBeforeQBIFloored" />
+          </Multiply>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== THRESHOLD CHECK ===================== -->
+
+    <Fact path="/qbiThreshold">
+      <Name>QBI income threshold</Name>
+      <Description>The income threshold for using the simplified Form 8995.
+        $191,950 for Single, HOH, and MFS; $383,900 for MFJ and QSS.
+        Tax year 2024 values per Rev. Proc. 2023-34.</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+                <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+              </Any>
+            </When>
+            <Then>
+              <Dollar>383900</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>191950</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/isUnderQBIThreshold">
+      <Name>Under QBI threshold</Name>
+      <Description>Whether taxable income before QBI is at or below the threshold,
+        making the taxpayer eligible for the simplified Form 8995 computation.</Description>
+      <Derived>
+        <LessThanOrEqual>
+          <Left>
+            <Dependency path="/taxableIncomeBeforeQBI" />
+          </Left>
+          <Right>
+            <Dependency path="/qbiThreshold" />
+          </Right>
+        </LessThanOrEqual>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== DEDUCTION COMPONENTS ===================== -->
+
+    <Fact path="/qbiDeductionBeforeCap">
+      <Name>QBI deduction before cap</Name>
+      <Description>The lesser of QBI component (20% of QBI) and income limitation
+        (20% of taxable income before QBI). Form 8995 line 9.</Description>
+      <Derived>
+        <LesserOf>
+          <Dependency path="/qbiComponent" />
+          <Dependency path="/incomeLimitation" />
+        </LesserOf>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== FINAL QBI DEDUCTION ===================== -->
+
+    <Fact path="/qbiDeduction">
+      <Name>Qualified business income deduction</Name>
+      <Description>The QBI deduction for Form 1040 line 13 (Form 8995 line 13).
+        Lesser of the deduction before cap and taxable income before QBI.
+        Only computed when under the simplified-form threshold and QBI is positive;
+        $0 otherwise.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Switch>
+          <!-- Must have Schedule C income, be under threshold, and have positive QBI -->
+          <Case>
+            <When>
+              <All>
+                <Dependency module="scheduleC" path="/hasScheduleCIncome" />
+                <Dependency path="/isUnderQBIThreshold" />
+                <GreaterThan>
+                  <Left>
+                    <Dependency path="/totalQualifiedBusinessIncome" />
+                  </Left>
+                  <Right>
+                    <Dollar>0</Dollar>
+                  </Right>
+                </GreaterThan>
+              </All>
+            </When>
+            <Then>
+              <LesserOf>
+                <Dependency path="/qbiDeductionBeforeCap" />
+                <Dependency path="/taxableIncomeBeforeQBIFloored" />
+              </LesserOf>
+            </Then>
+          </Case>
+          <!-- No QBI, over threshold, or negative QBI -->
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>
