@@ -12,7 +12,37 @@
           <IsComplete>
             <Dependency module="scheduleSE" path="/requiresScheduleSE" />
           </IsComplete>
+          <IsComplete>
+            <Dependency module="form6251" path="/requiresForm6251" />
+          </IsComplete>
         </Any>
+      </Derived>
+    </Fact>
+
+    <!-- AMT amount (Schedule 2 Part I, line 1) -->
+    <Fact path="/schedule2AMT">
+      <Description>Alternative Minimum Tax for Schedule 2 Part I, line 1.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <IsComplete>
+                <Dependency module="form6251" path="/amtAmount" />
+              </IsComplete>
+            </When>
+            <Then>
+              <Dependency module="form6251" path="/amtAmount" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
       </Derived>
     </Fact>
 
@@ -72,11 +102,13 @@
 
     <Fact path="/totalAdditionalTaxesOwed">
       <Description>Line 21 of Schedule 2 for line 23 of Form 1040. Sum of all additional taxes
-        including PTC repayment (Part I) and SE tax (Part II).</Description>
+        including AMT (Part I, line 1), PTC repayment (Part I, line 2),
+        and SE tax (Part II, line 4).</Description>
       <Export mef="true" downstreamFacts="true" />
       <Derived>
         <Round>
           <Add>
+            <Dependency path="/schedule2AMT" />
             <Dependency path="/schedule2PtcRepayment" />
             <Dependency path="/schedule2SETax" />
           </Add>

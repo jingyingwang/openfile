@@ -1,0 +1,557 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<FactDictionaryModule>
+  <Facts>
+    <!-- ===================== FORM 6251: ALTERNATIVE MINIMUM TAX ===================== -->
+    <!-- The AMT ensures taxpayers with certain deductions still pay a minimum tax.
+         It recomputes taxable income by adding back disallowed deductions (like the
+         standard deduction), applies a flat 26%/28% rate to get tentative minimum tax,
+         then AMT = max(0, tentative minimum tax − regular tax). -->
+
+    <!-- ===================== CONSTANTS ===================== -->
+
+    <!-- AMT Exemption Amounts — IRC §55(d)(1) -->
+    <Fact path="/amtExemptionSingleHOH">
+      <Description>AMT exemption for Single and Head of Household filers.
+        Rev Proc 2023-34 §55(d)(1)(B)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>85700</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtExemptionSingleHOH">
+      <Description>AMT exemption for Single and Head of Household filers.
+        Rev Proc 2024-40 §55(d)(1)(B)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>88100</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtExemptionMFJ">
+      <Description>AMT exemption for Married Filing Jointly and Qualifying Surviving Spouse.
+        Rev Proc 2023-34 §55(d)(1)(A)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>133300</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtExemptionMFJ">
+      <Description>AMT exemption for Married Filing Jointly and Qualifying Surviving Spouse.
+        Rev Proc 2024-40 §55(d)(1)(A)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>137000</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtExemptionMFS">
+      <Description>AMT exemption for Married Filing Separately.
+        Rev Proc 2023-34 §55(d)(1)(C)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>66650</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtExemptionMFS">
+      <Description>AMT exemption for Married Filing Separately.
+        Rev Proc 2024-40 §55(d)(1)(C)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>68500</Dollar>
+      </Derived>
+    </Fact>
+
+    <!-- AMT Exemption Phaseout Thresholds — IRC §55(d)(2) -->
+    <Fact path="/amtPhaseoutThresholdSingleHOH">
+      <Description>AMTI threshold above which the AMT exemption begins to phase out
+        for Single and Head of Household filers.
+        Rev Proc 2023-34 §55(d)(2)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>609350</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtPhaseoutThresholdSingleHOH">
+      <Description>AMTI threshold above which the AMT exemption begins to phase out
+        for Single and Head of Household filers.
+        Rev Proc 2024-40 §55(d)(2)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>626350</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtPhaseoutThresholdMFJ">
+      <Description>AMTI threshold above which the AMT exemption begins to phase out
+        for Married Filing Jointly and Qualifying Surviving Spouse.
+        Rev Proc 2023-34 §55(d)(2)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>1218700</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtPhaseoutThresholdMFJ">
+      <Description>AMTI threshold above which the AMT exemption begins to phase out
+        for Married Filing Jointly and Qualifying Surviving Spouse.
+        Rev Proc 2024-40 §55(d)(2)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>1252700</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtPhaseoutThresholdMFS">
+      <Description>AMTI threshold above which the AMT exemption begins to phase out
+        for Married Filing Separately filers.
+        Rev Proc 2023-34 §55(d)(2)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>609350</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtPhaseoutThresholdMFS">
+      <Description>AMTI threshold above which the AMT exemption begins to phase out
+        for Married Filing Separately filers.
+        Rev Proc 2024-40 §55(d)(2)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>626350</Dollar>
+      </Derived>
+    </Fact>
+
+    <!-- AMT 28% Rate Threshold — IRC §55(b)(1)(A)(i) -->
+    <Fact path="/amtHighRateThreshold">
+      <Description>AMTI threshold above which the 28% AMT rate applies (for non-MFS filers).
+        Rev Proc 2023-34 §55(b)(1)(A)(i)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>232600</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtHighRateThreshold">
+      <Description>AMTI threshold above which the 28% AMT rate applies (for non-MFS filers).
+        Rev Proc 2024-40 §55(b)(1)(A)(i)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>239100</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtHighRateThresholdMFS">
+      <Description>AMTI threshold above which the 28% AMT rate applies for MFS filers.
+        Rev Proc 2023-34 §55(b)(1)(A)(i)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Dollar>116300</Dollar>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtHighRateThresholdMFS">
+      <Description>AMTI threshold above which the 28% AMT rate applies for MFS filers.
+        Rev Proc 2024-40 §55(b)(1)(A)(i)</Description>
+      <TaxYear>2025</TaxYear>
+      <Derived>
+        <Dollar>119550</Dollar>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== LINE 1: TAXABLE INCOME ===================== -->
+    <!-- Form 6251, Line 1: Taxable income from Form 1040, line 15. If zero or less, enter 0. -->
+    <Fact path="/amtTaxableIncome">
+      <Description>Form 6251 line 1. Taxable income from Form 1040 line 15, but not less than 0.</Description>
+      <Derived>
+        <GreaterOf>
+          <Dependency module="taxCalculations" path="/taxableIncome" />
+          <Dollar>0</Dollar>
+        </GreaterOf>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== LINES 2a–2r: AMT ADJUSTMENTS ===================== -->
+
+    <!-- Line 2a: Standard deduction (if claimed).
+         In Direct File, the standard deduction is always used. The full standard deduction
+         amount must be added back for AMT purposes because AMT disallows this deduction. -->
+    <Fact path="/amtStandardDeductionAdjustment">
+      <Description>Form 6251 line 2a. Standard deduction claimed on Form 1040.
+        Must be added back for AMT because the standard deduction is not allowed
+        for AMT purposes. Only nonzero when the taxpayer claims the standard deduction.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency module="taxCalculations" path="/wantsStandardDeduction" />
+            </When>
+            <Then>
+              <Dependency module="standardDeduction" path="/standardDeduction" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>0</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Lines 2b–2r: Other AMT adjustments.
+         These are out of scope for Direct File's current implementation:
+         - Line 2b: Tax refunds (Schedule 1, line 1) — not in scope
+         - Line 2c: Investment interest expense — not in scope
+         - Line 2d: Depletion — not in scope
+         - Line 2e: Net operating loss — not in scope
+         - Line 2f: Alternative tax NOL — not in scope
+         - Line 2g: Interest from private activity bonds — not in scope
+         - Line 2h: Qualified small business stock — not in scope
+         - Line 2i: Exercise of ISOs — not in scope
+         - Line 2j: Estates and trusts — not in scope
+         - Line 2k: Disposition of property — not in scope
+         - Line 2l: Depreciation — not in scope
+         - Line 2m: Tax-exempt interest from PABs — not in scope
+         - Line 2n: Intangible drilling costs — not in scope
+         - Line 2o: Other adjustments — not in scope
+         - Line 2p: Alternative tax NOL deduction — not in scope
+         - Line 2r: Itemized deduction adjustment — not in scope (no itemized deductions) -->
+
+    <!-- ===================== LINE 2s: AMTI ===================== -->
+    <!-- Form 6251, Line 2s: Alternative Minimum Taxable Income.
+         Sum of line 1 and all adjustments (lines 2a through 2r). -->
+    <Fact path="/amti">
+      <Name>Alternative Minimum Taxable Income</Name>
+      <Description>Form 6251 line 2s. Sum of taxable income and all AMT adjustments.
+        For Direct File's scope (standard deduction only), this equals
+        taxable income + standard deduction.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Round>
+          <Add>
+            <Dependency path="/amtTaxableIncome" />
+            <Dependency path="/amtStandardDeductionAdjustment" />
+          </Add>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== LINES 3–5: AMT EXEMPTION ===================== -->
+
+    <!-- Line 3: AMT exemption amount based on filing status -->
+    <Fact path="/amtExemptionForFilingStatus">
+      <Description>Form 6251 line 3. Base AMT exemption amount based on filing status
+        before any phaseout reduction.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+                <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+              </Any>
+            </When>
+            <Then>
+              <Dependency path="/amtExemptionMFJ" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+            </When>
+            <Then>
+              <Dependency path="/amtExemptionMFS" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <!-- Single and Head of Household -->
+              <Dependency path="/amtExemptionSingleHOH" />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Phaseout threshold based on filing status -->
+    <Fact path="/amtPhaseoutForFilingStatus">
+      <Description>AMTI threshold at which the AMT exemption begins to phase out,
+        based on filing status.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Any>
+                <Dependency module="filingStatus" path="/isFilingStatusMFJ" />
+                <Dependency module="filingStatus" path="/isFilingStatusQSS" />
+              </Any>
+            </When>
+            <Then>
+              <Dependency path="/amtPhaseoutThresholdMFJ" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+            </When>
+            <Then>
+              <Dependency path="/amtPhaseoutThresholdMFS" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dependency path="/amtPhaseoutThresholdSingleHOH" />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <!-- Line 4: Exemption phaseout reduction.
+         The exemption is reduced by 25 cents for each dollar of AMTI over the threshold.
+         Reduction = max(0, (AMTI − threshold)) × 25% -->
+    <Fact path="/amtExemptionPhaseoutReduction">
+      <Description>Form 6251 line 4. Amount by which the AMT exemption is reduced due to
+        high AMTI. Equals 25% of (AMTI − phaseout threshold), but not less than 0.</Description>
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <Multiply>
+              <GreaterOf>
+                <Subtract>
+                  <Minuend>
+                    <Dependency path="/amti" />
+                  </Minuend>
+                  <Subtrahends>
+                    <Dependency path="/amtPhaseoutForFilingStatus" />
+                  </Subtrahends>
+                </Subtract>
+                <Dollar>0</Dollar>
+              </GreaterOf>
+              <Rational>25/100</Rational>
+            </Multiply>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- Line 5: AMT exemption after phaseout.
+         max(0, base exemption − phaseout reduction) -->
+    <Fact path="/amtExemptionAfterPhaseout">
+      <Description>Form 6251 line 5. AMT exemption amount after applying the phaseout
+        reduction. Cannot be less than 0.</Description>
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <Subtract>
+              <Minuend>
+                <Dependency path="/amtExemptionForFilingStatus" />
+              </Minuend>
+              <Subtrahends>
+                <Dependency path="/amtExemptionPhaseoutReduction" />
+              </Subtrahends>
+            </Subtract>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== LINE 6: AMTI LESS EXEMPTION ===================== -->
+    <!-- Form 6251, Line 6: AMTI minus exemption, but not less than 0 -->
+    <Fact path="/amtiLessExemption">
+      <Description>Form 6251 line 6. AMTI minus the AMT exemption amount.
+        This is the base amount subject to AMT tax rates.</Description>
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <Subtract>
+              <Minuend>
+                <Dependency path="/amti" />
+              </Minuend>
+              <Subtrahends>
+                <Dependency path="/amtExemptionAfterPhaseout" />
+              </Subtrahends>
+            </Subtract>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== LINE 7: TENTATIVE MINIMUM TAX ===================== -->
+    <!-- The AMT uses a two-bracket rate structure:
+         - 26% on the first portion (up to the threshold)
+         - 28% on the remainder
+         The threshold is $232,600/$239,100 for non-MFS, half that for MFS. -->
+
+    <!-- 28% rate threshold based on filing status -->
+    <Fact path="/amtHighRateThresholdForFilingStatus">
+      <Description>The AMTI threshold above which the 28% AMT rate applies,
+        based on filing status. MFS filers use half the normal threshold.</Description>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+            </When>
+            <Then>
+              <Dependency path="/amtHighRateThresholdMFS" />
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dependency path="/amtHighRateThreshold" />
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/amtTentativeMinimumTax">
+      <Name>Tentative minimum tax</Name>
+      <Description>Form 6251 line 7. Tentative minimum tax computed using the AMT
+        rate structure: 26% on the first portion up to the threshold,
+        28% on the excess.</Description>
+      <Export mef="true" />
+      <Derived>
+        <Round>
+          <Switch>
+            <!-- If AMTI less exemption is zero, no tentative minimum tax -->
+            <Case>
+              <When>
+                <LessThanOrEqual>
+                  <Left>
+                    <Dependency path="/amtiLessExemption" />
+                  </Left>
+                  <Right>
+                    <Dollar>0</Dollar>
+                  </Right>
+                </LessThanOrEqual>
+              </When>
+              <Then>
+                <Dollar>0</Dollar>
+              </Then>
+            </Case>
+            <!-- If AMTI less exemption is at or below the 28% threshold: all at 26% -->
+            <Case>
+              <When>
+                <LessThanOrEqual>
+                  <Left>
+                    <Dependency path="/amtiLessExemption" />
+                  </Left>
+                  <Right>
+                    <Dependency path="/amtHighRateThresholdForFilingStatus" />
+                  </Right>
+                </LessThanOrEqual>
+              </When>
+              <Then>
+                <Multiply>
+                  <Dependency path="/amtiLessExemption" />
+                  <Rational>26/100</Rational>
+                </Multiply>
+              </Then>
+            </Case>
+            <!-- If AMTI less exemption exceeds threshold: 26% on first portion + 28% on excess -->
+            <Case>
+              <When>
+                <True />
+              </When>
+              <Then>
+                <Add>
+                  <Multiply>
+                    <Dependency path="/amtHighRateThresholdForFilingStatus" />
+                    <Rational>26/100</Rational>
+                  </Multiply>
+                  <Multiply>
+                    <Subtract>
+                      <Minuend>
+                        <Dependency path="/amtiLessExemption" />
+                      </Minuend>
+                      <Subtrahends>
+                        <Dependency path="/amtHighRateThresholdForFilingStatus" />
+                      </Subtrahends>
+                    </Subtract>
+                    <Rational>28/100</Rational>
+                  </Multiply>
+                </Add>
+              </Then>
+            </Case>
+          </Switch>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== LINE 8: REGULAR TAX ===================== -->
+    <!-- Form 6251, Line 8: Tax from Form 1040, line 16.
+         For Direct File, this is the tentative tax from taxable income.
+         In a full implementation, this would subtract foreign tax credit. -->
+    <Fact path="/amtRegularTax">
+      <Description>Form 6251 line 8. Regular tax from Form 1040 line 16.
+        For Direct File's scope, this is the tentative tax from taxable income
+        (no foreign tax credit adjustment needed).</Description>
+      <Derived>
+        <Dependency module="taxCalculations" path="/tentativeTaxFromTaxableIncome" />
+      </Derived>
+    </Fact>
+
+    <!-- ===================== LINE 9: AMT AMOUNT ===================== -->
+    <!-- Form 6251, Line 9: AMT = max(0, tentative minimum tax − regular tax) -->
+    <Fact path="/amtAmount">
+      <Name>Alternative Minimum Tax</Name>
+      <Description>Form 6251 line 9. The Alternative Minimum Tax amount.
+        Equals the excess of tentative minimum tax over regular tax, or zero
+        if regular tax exceeds tentative minimum tax. This amount flows to
+        Schedule 2, Part I, Line 1.</Description>
+      <Export mef="true" downstreamFacts="true" />
+      <Derived>
+        <Round>
+          <GreaterOf>
+            <Subtract>
+              <Minuend>
+                <Dependency path="/amtTentativeMinimumTax" />
+              </Minuend>
+              <Subtrahends>
+                <Dependency path="/amtRegularTax" />
+              </Subtrahends>
+            </Subtract>
+            <Dollar>0</Dollar>
+          </GreaterOf>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <!-- ===================== GATING FLAGS ===================== -->
+    <Fact path="/requiresForm6251">
+      <Description>Whether Form 6251 is required. True when AMT amount is greater than zero.</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <GreaterThan>
+          <Left>
+            <Dependency path="/amtAmount" />
+          </Left>
+          <Right>
+            <Dollar>0</Dollar>
+          </Right>
+        </GreaterThan>
+      </Derived>
+    </Fact>
+  </Facts>
+</FactDictionaryModule>
