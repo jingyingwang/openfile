@@ -462,6 +462,9 @@
       <Derived>
         <All>
           <Dependency path="/flowHasSeenDeductions" />
+          <IsComplete>
+            <Dependency module="taxCalculations" path="/wantsStandardDeduction" />
+          </IsComplete>
           <Any>
             <All>
               <!-- If they are not MFJ dependents and have access to deductions,
@@ -475,6 +478,11 @@
               <IsComplete>
                 <Dependency module="studentLoanAdjustment" path="/studentLoanInterestAdjustmentAmount" />
               </IsComplete>
+              <!-- If itemized, Schedule A must be complete -->
+              <Any>
+                <Dependency module="taxCalculations" path="/wantsStandardDeduction" />
+                <Dependency module="scheduleA" path="/scheduleA/isComplete" />
+              </Any>
             </All>
             <!-- MFS dependents are automatically disqualifed from our current adjustments scope and
                 will have no data to enter. But we want them to enter the section, so we track if

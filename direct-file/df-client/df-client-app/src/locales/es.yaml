@@ -1509,6 +1509,94 @@ info:
                 préstamos para saber la cantidad exacta de los intereses que pagaste durante el año.
             - p: >-
                 Para obtener más información, consulta la <Link1>Publicación 970 (en inglés)</Link1>.
+  /info/credits-and-deductions/deduction-choice-details:
+    body:
+      - p: >-
+          La mayoría de los contribuyentes toman la deducción estándar, que es una cantidad fija basada en tu estado civil
+          tributario. Si tus deducciones detalladas (gastos médicos, impuestos pagados, intereses y contribuciones
+          caritativas) son mayores que la deducción estándar, podrías beneficiarte al detallar.
+      - p: >-
+          Tu cantidad de deducción estándar es <strong>{{/standardOrItemizedDeductions}}</strong>
+          según tu estado civil tributario de {{/filingStatusCapitalized}}.
+  /info/credits-and-deductions/deduction-choice-learn-more:
+    header: Deducción estándar vs. deducciones detalladas
+    body:
+      - p: >-
+          La <strong>deducción estándar</strong> es una cantidad fija en dólares que reduce los ingresos sobre los que
+          pagas impuestos. La mayoría de los contribuyentes toman la deducción estándar porque es sencilla y a menudo
+          proporciona una deducción mayor.
+      - p: >-
+          Las <strong>deducciones detalladas</strong> te permiten deducir gastos específicos que has pagado durante el año,
+          incluyendo:
+      - ul:
+          - li: Gastos médicos y dentales que superen el 7.5% de tu ingreso bruto ajustado
+          - li: Impuestos estatales y locales (con un límite de $40,000)
+          - li: Intereses de hipoteca
+          - li: Contribuciones caritativas
+      - p: >-
+          Deberías detallar si el total de tus deducciones detalladas es mayor que tu deducción estándar.
+  /info/credits-and-deductions/itemized-medical-details:
+    header: ¿Qué cuenta como gastos médicos y dentales?
+    body:
+      - p: >-
+          Puedes deducir gastos médicos y dentales que superen el 7.5% de tu ingreso bruto ajustado (AGI). Esto incluye
+          pagos a médicos, dentistas, cirujanos, servicios hospitalarios, medicamentos recetados y equipo médico.
+      - p: No incluyas gastos reembolsados por el seguro.
+  /info/credits-and-deductions/itemized-salt-details:
+    header: Impuestos estatales y locales
+    body:
+      - p: >-
+          Puedes deducir impuestos estatales y locales sobre ingresos (o impuestos generales sobre ventas), impuestos
+          sobre bienes raíces e impuestos sobre bienes muebles personales. El total de estas deducciones tiene un límite
+          de $40,000 ($20,000 si presentas como casado por separado).
+      - p: >-
+          Ingresa la cantidad de tu declaración de impuestos estatal o la Casilla 17 de tu W-2.
+  /info/credits-and-deductions/itemized-mortgage-details:
+    header: Intereses de hipoteca
+    body:
+      - p: >-
+          Puedes deducir los intereses pagados en tu hipoteca. Esta cantidad generalmente se informa en el
+          Formulario 1098 de tu prestamista.
+      - p: Ingresa la cantidad de la Casilla 1 de tu Formulario 1098.
+  /info/credits-and-deductions/itemized-mortgage-not-reported-details:
+    body:
+      - p: >-
+          Si pagaste intereses hipotecarios a una persona o entidad que no te envió un Formulario 1098,
+          ingresa esos intereses aquí.
+  /info/credits-and-deductions/itemized-charity-details:
+    header: Contribuciones caritativas
+    body:
+      - p: >-
+          Puedes deducir contribuciones en efectivo a organizaciones caritativas calificadas. Las contribuciones en
+          efectivo incluyen las realizadas por cheque, tarjeta de crédito o transferencia electrónica de fondos.
+      - p: >-
+          Debes tener registros escritos (como recibos o estados de cuenta bancarios) para todas las donaciones en
+          efectivo. Para contribuciones individuales en efectivo de $250 o más, necesitas un reconocimiento escrito
+          de la organización caritativa.
+  /info/credits-and-deductions/itemized-charity-carryover-details:
+    body:
+      - p: >-
+          Si tus contribuciones caritativas en un año anterior excedieron los límites del AGI, es posible que tengas una
+          cantidad de arrastre que se puede deducir este año. Verifica tu declaración de impuestos del año anterior para
+          ver si hay cantidades de arrastre.
+  /info/credits-and-deductions/itemized-other-details:
+    header: Otras deducciones detalladas
+    body:
+      - p: "Otras deducciones detalladas incluyen:"
+      - ul:
+          - li: Pérdidas por hechos fortuitos y robos de un desastre declarado federalmente
+          - li: Pérdidas de juegos de azar (hasta la cantidad de las ganancias de juegos de azar)
+          - li: Gastos de trabajo relacionados con discapacidades
+          - li: Inversión no recuperada en una pensión
+  /info/credits-and-deductions/itemized-summary:
+    sections:
+      - heading: Deducciones detalladas
+    medical: "Gastos médicos y dentales: {{/scheduleA/medicalDeductibleAmount}}"
+    salt: "Impuestos estatales y locales: {{/scheduleA/totalSaltDeduction}}"
+    interest: "Intereses pagados: {{/scheduleA/totalInterestDeduction}}"
+    charity: "Donaciones a organizaciones caritativas: {{/scheduleA/totalCharityDeduction}}"
+    other: "Otras deducciones: {{/scheduleA/otherItemizedDeductions}}"
+    total: "Total de deducciones detalladas: {{/scheduleA/totalItemizedDeductions}}"
   /info/credits-and-deductions/standard-deduction-intro-details:
     body:
       - p: "Esta cantidad es con base en:"
@@ -1658,6 +1746,9 @@ info:
                       impuestos. <LinkFilingOptions>Encuentra otras maneras de presentar tus impuestos
                       federales.</LinkFilingOptions>
         td: "-{{/standardDeduction}}"
+      itemizedDeductions:
+        th: Deducciones detalladas (Anexo A)
+        td: "-{{/scheduleA/totalItemizedDeductions}}"
       taxableIncome:
         th: <strong>Ingreso tributable</strong>
         td: <strong>= {{/taxableIncome}}</strong>
@@ -16987,6 +17078,10 @@ fields:
       InvalidAllZerosIpPin: El PIN no puede ser todos ceros
   /interestReports/*/no1099Amount:
     name: Ingresos por intereses tributables
+  /wantsStandardDeduction:
+    boolean:
+      "yes": "Sí, tomaré la deducción estándar"
+      "no": "No, quiero detallar mis deducciones"
   /studentLoansQualify:
     boolean:
       "yes": Sí, uno o más de los préstamos califican
@@ -19336,6 +19431,7 @@ checklist:
     heading: Deducciones
     dataItems:
       standardDeduction: "Deducción estándar: {{/standardDeduction}}"
+      itemizedDeduction: "Deducciones detalladas: {{/scheduleA/totalItemizedDeductions}}"
       adjustment: "Ajustes: {{/adjustmentsTotal}}"
   /flow/credits-and-deductions/credits:
     heading: Créditos
@@ -19886,6 +19982,22 @@ headings:
   /heading/credits-and-deductions/student-loan-interest-not-qualified-mfj: >-
     También verificamos si tú {{/secondaryFiler/firstName, prefixOr}} califican para la deducción de los intereses de
     los préstamos estudiantiles
+  /heading/credits-and-deductions/deduction-choice-context: Elección de deducción
+  /heading/credits-and-deductions/deduction-choice: ¿Deseas tomar la deducción estándar?
+  /heading/credits-and-deductions/itemized-deductions-context: Deducciones detalladas
+  /heading/credits-and-deductions/itemized-medical: ¿Cuánto pagaste por gastos médicos y dentales?
+  /heading/credits-and-deductions/itemized-salt-state: ¿Cuánto pagaste en impuestos estatales y locales sobre ingresos?
+  /heading/credits-and-deductions/itemized-salt-local: ¿Cuánto pagaste en impuestos locales sobre ingresos?
+  /heading/credits-and-deductions/itemized-salt-realestate: ¿Cuánto pagaste en impuestos sobre bienes raíces?
+  /heading/credits-and-deductions/itemized-salt-personal: ¿Cuánto pagaste en impuestos sobre bienes muebles personales?
+  /heading/credits-and-deductions/itemized-mortgage-interest: ¿Cuánto pagaste en intereses de hipoteca?
+  /heading/credits-and-deductions/itemized-mortgage-not-reported: ¿Cuánto interés hipotecario no se informó en el Formulario 1098?
+  /heading/credits-and-deductions/itemized-mortgage-insurance: ¿Cuánto pagaste por primas de seguro hipotecario?
+  /heading/credits-and-deductions/itemized-charity-cash: ¿Cuánto donaste en efectivo o por cheque?
+  /heading/credits-and-deductions/itemized-charity-noncash: ¿Cuánto donaste en contribuciones que no son en efectivo?
+  /heading/credits-and-deductions/itemized-charity-carryover: ¿Tienes un arrastre de contribuciones caritativas de un año anterior?
+  /heading/credits-and-deductions/itemized-other: ¿Tienes otras deducciones detalladas?
+  /heading/credits-and-deductions/itemized-summary: Aquí tienes un resumen de tus deducciones detalladas
   /heading/credits-and-deductions/standard-deduction-intro-context: Deducción estándar
   /heading/credits-and-deductions/standard-deduction-intro:
     helpText:
@@ -22383,6 +22495,19 @@ dataviews:
       /hsaDeductionAmountBoth: >-
         Al determinar tus ingresos tributables, deducirás {{/bothFilersHsaNonEmployerContributionsTotal}} en
         aportaciones a una HSA.
+    /wantsStandardDeduction: Elección de deducción
+    /scheduleA/medicalExpenses: Gastos médicos y dentales
+    /scheduleA/stateTaxesPaid: Impuestos estatales y locales sobre ingresos
+    /scheduleA/localTaxesPaid: Impuestos locales sobre ingresos
+    /scheduleA/realEstateTaxes: Impuestos sobre bienes raíces
+    /scheduleA/personalPropertyTaxes: Impuestos sobre bienes muebles personales
+    /scheduleA/homeMortgageInterest: Intereses de hipoteca (Formulario 1098)
+    /scheduleA/homeMortgageInterestNotReported: Intereses de hipoteca (no en Formulario 1098)
+    /scheduleA/mortgageInsurancePremiums: Primas de seguro hipotecario
+    /scheduleA/charityCash: Contribuciones caritativas en efectivo
+    /scheduleA/charityNonCash: Contribuciones caritativas que no son en efectivo
+    /scheduleA/charityCarryover: Arrastre de contribuciones caritativas
+    /scheduleA/otherItemizedDeductions: Otras deducciones detalladas
     /hadStudentLoanInterestPayments: $t(headings./heading/credits-and-deductions/paid-student-loan-interest)
     /hadStudentLoanInterestPayments_spouse: >-
       $t(headings./heading/credits-and-deductions/paid-student-loan-interest-mfj)
@@ -24988,6 +25113,8 @@ subsubcategories:
     care-providers-amount-paid__errorLinkTextOverride: Cantidad pagada
   /flow/credits-and-deductions/deductions:
     taxable-income: Ingreso tributable
+    deduction-choice: Elección de deducción
+    itemized-deductions: Deducciones detalladas
     standard-deduction: Deducción estándar
     student-loan-int-deduction: Deducción de los intereses de los préstamos estudiantiles
     educator-expenses-deduction: Deducción de gastos de educador

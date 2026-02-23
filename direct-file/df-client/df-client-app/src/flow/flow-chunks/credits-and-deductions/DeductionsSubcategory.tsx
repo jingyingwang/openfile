@@ -17,6 +17,7 @@ import {
   DFAlert,
   KnockoutButton,
 } from '../../ContentDeclarations.js';
+import { ItemizedDeductionsSubSubcategory } from './ItemizedDeductionsSubcategory.js';
 
 export const DeductionsSubcategory = (
   <Subcategory
@@ -26,6 +27,10 @@ export const DeductionsSubcategory = (
       {
         itemKey: `standardDeduction`,
         conditions: [`/wantsStandardDeduction`],
+      },
+      {
+        itemKey: `itemizedDeduction`,
+        conditions: [{ operator: `isFalse`, condition: `/wantsStandardDeduction` }],
       },
       {
         itemKey: `adjustment`,
@@ -398,8 +403,21 @@ export const DeductionsSubcategory = (
       </Screen>
     </Gate>
 
+    <SubSubcategory route='deduction-choice'>
+      <Screen route='deduction-type-choice' condition={{ operator: `isFalseOrIncomplete`, condition: `/isMFJDependent` }}>
+        <ContextHeading displayOnlyOn='edit' i18nKey='/heading/credits-and-deductions/deduction-choice-context' />
+        <Heading i18nKey='/heading/credits-and-deductions/deduction-choice' />
+        <InfoDisplay i18nKey='/info/credits-and-deductions/deduction-choice-details' />
+        <DFModal i18nKey='/info/credits-and-deductions/deduction-choice-learn-more' />
+        <Boolean path='/wantsStandardDeduction' />
+        <SaveAndOrContinueButton />
+      </Screen>
+    </SubSubcategory>
+
+    {ItemizedDeductionsSubSubcategory}
+
     <SubSubcategory route='standard-deduction' editable={false}>
-      <Screen route='standard-deduction-intro'>
+      <Screen route='standard-deduction-intro' condition='/wantsStandardDeduction'>
         <IconDisplay name='InfoOutline' size={9} isCentered className='text-primary' />
         <ContextHeading
           displayOnlyOn='edit'
@@ -526,6 +544,11 @@ export const DeductionsSubcategory = (
             },
             {
               itemKey: `standardDeduction`,
+              conditions: [`/wantsStandardDeduction`],
+            },
+            {
+              itemKey: `itemizedDeductions`,
+              conditions: [{ operator: `isFalse`, condition: `/wantsStandardDeduction` }],
             },
             {
               itemKey: `taxableIncome`,

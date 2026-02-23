@@ -1566,6 +1566,22 @@ headings:
     dependent on their {{/taxYear}} federal tax return.
   /heading/credits-and-deductions/student-loans-not-qualified-loans-not-qualified:
     Based on your answers, you can’t deduct student loan interest because your loans don’t qualify.
+  /heading/credits-and-deductions/deduction-choice-context: Deduction choice
+  /heading/credits-and-deductions/deduction-choice: Would you like to take the standard deduction?
+  /heading/credits-and-deductions/itemized-deductions-context: Itemized deductions
+  /heading/credits-and-deductions/itemized-medical: How much did you pay for medical and dental expenses?
+  /heading/credits-and-deductions/itemized-salt-state: How much did you pay in state and local income taxes?
+  /heading/credits-and-deductions/itemized-salt-local: How much did you pay in local income taxes?
+  /heading/credits-and-deductions/itemized-salt-realestate: How much did you pay in real estate taxes?
+  /heading/credits-and-deductions/itemized-salt-personal: How much did you pay in personal property taxes?
+  /heading/credits-and-deductions/itemized-mortgage-interest: How much home mortgage interest did you pay?
+  /heading/credits-and-deductions/itemized-mortgage-not-reported: How much mortgage interest was not reported on Form 1098?
+  /heading/credits-and-deductions/itemized-mortgage-insurance: How much did you pay for mortgage insurance premiums?
+  /heading/credits-and-deductions/itemized-charity-cash: How much did you donate in cash or by check?
+  /heading/credits-and-deductions/itemized-charity-noncash: How much did you donate in non-cash contributions?
+  /heading/credits-and-deductions/itemized-charity-carryover: Do you have charitable contribution carryover from a prior year?
+  /heading/credits-and-deductions/itemized-other: Do you have any other itemized deductions?
+  /heading/credits-and-deductions/itemized-summary: Here's a summary of your itemized deductions
   /heading/credits-and-deductions/standard-deduction-intro-context: Standard deduction
   /heading/credits-and-deductions/standard-deduction-intro:
     helpText:
@@ -16077,6 +16093,91 @@ info:
                 from your loan servicer. Contact your loan servicer to find out the exact amount of interest paid during
                 the year.
             - p: For more information, refer to <Link1>Publication 970</Link1>.
+  /info/credits-and-deductions/deduction-choice-details:
+    body:
+      - p: >-
+          Most taxpayers take the standard deduction, which is a fixed amount based on your filing status.
+          If your itemized deductions (medical expenses, taxes paid, interest, and charitable contributions)
+          are greater than the standard deduction, you may benefit from itemizing.
+      - p: >-
+          Your standard deduction amount is <strong>{{/standardOrItemizedDeductions}}</strong>
+          based on your filing status of {{/filingStatusCapitalized}}.
+  /info/credits-and-deductions/deduction-choice-learn-more:
+    header: Standard vs. itemized deductions
+    body:
+      - p: >-
+          The <strong>standard deduction</strong> is a flat dollar amount that reduces the income you're taxed on.
+          Most taxpayers take the standard deduction because it's simple and often provides a larger deduction.
+      - p: >-
+          <strong>Itemized deductions</strong> let you deduct specific expenses you've paid during the year, including:
+      - ul:
+          - li: Medical and dental expenses above 7.5% of your adjusted gross income
+          - li: State and local taxes (capped at $40,000)
+          - li: Home mortgage interest
+          - li: Charitable contributions
+      - p: >-
+          You should itemize if the total of your itemized deductions is greater than your standard deduction.
+  /info/credits-and-deductions/itemized-medical-details:
+    header: What counts as medical and dental expenses?
+    body:
+      - p: >-
+          You can deduct medical and dental expenses that exceed 7.5% of your adjusted gross income (AGI).
+          This includes payments for doctors, dentists, surgeons, hospital services, prescription drugs,
+          and medical equipment.
+      - p: Do not include expenses reimbursed by insurance.
+  /info/credits-and-deductions/itemized-salt-details:
+    header: State and local taxes
+    body:
+      - p: >-
+          You can deduct state and local income taxes (or general sales taxes), real estate taxes,
+          and personal property taxes. The total of these deductions is capped at $40,000
+          ($20,000 if married filing separately).
+      - p: >-
+          Enter the amount from your state tax return or W-2 Box 17.
+  /info/credits-and-deductions/itemized-mortgage-details:
+    header: Home mortgage interest
+    body:
+      - p: >-
+          You can deduct interest paid on your home mortgage. This amount is usually reported on
+          Form 1098 from your lender.
+      - p: Enter the amount from Box 1 of your Form 1098.
+  /info/credits-and-deductions/itemized-mortgage-not-reported-details:
+    body:
+      - p: >-
+          If you paid mortgage interest to a person or entity that did not send you a Form 1098,
+          enter that interest here.
+  /info/credits-and-deductions/itemized-charity-details:
+    header: Charitable contributions
+    body:
+      - p: >-
+          You can deduct cash contributions to qualified charitable organizations. Cash contributions
+          include those made by check, credit card, or electronic funds transfer.
+      - p: >-
+          You must have written records (such as receipts or bank statements) for all cash donations.
+          For individual cash contributions of $250 or more, you need a written acknowledgment from the charity.
+  /info/credits-and-deductions/itemized-charity-carryover-details:
+    body:
+      - p: >-
+          If your charitable contributions in a prior year exceeded the AGI limits, you may have a carryover
+          amount that can be deducted this year. Check your prior year tax return for any carryover amounts.
+  /info/credits-and-deductions/itemized-other-details:
+    header: Other itemized deductions
+    body:
+      - p: "Other itemized deductions include:"
+      - ul:
+          - li: Casualty and theft losses from a federally declared disaster
+          - li: Gambling losses (up to the amount of gambling winnings)
+          - li: Impairment-related work expenses
+          - li: Unrecovered investment in a pension
+  /info/credits-and-deductions/itemized-summary:
+    sections:
+      - heading: Itemized deductions
+    medical: "Medical and dental expenses: {{/scheduleA/medicalDeductibleAmount}}"
+    salt: "State and local taxes: {{/scheduleA/totalSaltDeduction}}"
+    interest: "Interest you paid: {{/scheduleA/totalInterestDeduction}}"
+    charity: "Gifts to charity: {{/scheduleA/totalCharityDeduction}}"
+    other: "Other deductions: {{/scheduleA/otherItemizedDeductions}}"
+    total: "Total itemized deductions: {{/scheduleA/totalItemizedDeductions}}"
   /info/credits-and-deductions/standard-deduction-intro-details:
     body:
       - p: "This amount is based on:"
@@ -16212,6 +16313,9 @@ info:
                       better for your tax situation, you’ll need to file using another tool. <LinkFilingOptions>Find
                       other ways to file your federal taxes.</LinkFilingOptions>
         td: "-{{/standardDeduction}}"
+      itemizedDeductions:
+        th: Itemized deductions (Schedule A)
+        td: "-{{/scheduleA/totalItemizedDeductions}}"
       taxableIncome:
         th: <strong>Taxable income</strong>
         td: <strong>= {{/taxableIncome}}</strong>
@@ -19438,6 +19542,10 @@ fields:
       boolean:
         "yes": Yes, I paid interest on a student loan in {{/taxYear}}
         "no": No, I didn’t pay any interest on student loans in {{/taxYear}}
+  /wantsStandardDeduction:
+    boolean:
+      "yes": "Yes, I'll take the standard deduction"
+      "no": "No, I want to itemize my deductions"
   /studentLoansQualify:
     boolean:
       "yes": Yes, one or more of the loans qualify
@@ -20100,6 +20208,7 @@ checklist:
     heading: Deductions
     dataItems:
       standardDeduction: "Standard deduction: {{/standardDeduction}}"
+      itemizedDeduction: "Itemized deductions: {{/scheduleA/totalItemizedDeductions}}"
       adjustment: "Adjustment: {{/adjustmentsTotal}}"
   /flow/credits-and-deductions/care-providers:
     heading: Care providers
@@ -24162,6 +24271,19 @@ dataviews:
     /studentLoanInterestAmount: Amount of student loan interest that you paid in {{/taxYear}}
     /studentLoanInterestAmount_spouse:
       Amount of student loan interest that you and {{/secondaryFiler/firstName}} paid in {{/taxYear}}
+    /wantsStandardDeduction: Deduction choice
+    /scheduleA/medicalExpenses: Medical and dental expenses
+    /scheduleA/stateTaxesPaid: State and local income taxes
+    /scheduleA/localTaxesPaid: Local income taxes
+    /scheduleA/realEstateTaxes: Real estate taxes
+    /scheduleA/personalPropertyTaxes: Personal property taxes
+    /scheduleA/homeMortgageInterest: Home mortgage interest (Form 1098)
+    /scheduleA/homeMortgageInterestNotReported: Home mortgage interest (not on Form 1098)
+    /scheduleA/mortgageInsurancePremiums: Mortgage insurance premiums
+    /scheduleA/charityCash: Cash charitable contributions
+    /scheduleA/charityNonCash: Non-cash charitable contributions
+    /scheduleA/charityCarryover: Charitable contribution carryover
+    /scheduleA/otherItemizedDeductions: Other itemized deductions
     /standardDeduction: Your standard deduction amount
     /taxableIncome: Your taxable income amount
     assertions:

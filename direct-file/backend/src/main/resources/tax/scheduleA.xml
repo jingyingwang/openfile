@@ -1,0 +1,331 @@
+<?xml-model href="./FactDictionaryModule.rng"?>
+<!-- Schedule A (Form 1040) — Itemized Deductions
+     IRS Form reference: https://www.irs.gov/forms-pubs/about-schedule-a-form-1040
+     OBBBA SALT cap: $40,000 for TY2025 -->
+<FactDictionaryModule>
+  <Facts>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MEDICAL AND DENTAL EXPENSES (Lines 1-4)
+         ═══════════════════════════════════════════════════════════ -->
+
+    <Fact path="/scheduleA/medicalExpenses">
+      <Name>Medical and dental expenses</Name>
+      <Description>Total medical and dental expenses (Schedule A Line 1)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/medicalAgiThreshold">
+      <Name>Medical AGI threshold</Name>
+      <Description>7.5% of AGI — the threshold above which medical expenses are deductible (Line 3)</Description>
+      <Derived>
+        <Round>
+          <Multiply>
+            <Dependency module="taxCalculations" path="/agi" />
+            <Decimal>0.075</Decimal>
+          </Multiply>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleA/medicalDeductibleAmount">
+      <Name>Medical deductible amount</Name>
+      <Description>Medical expenses exceeding 7.5% of AGI (Line 4).
+        max(0, medical expenses - 7.5% × AGI)</Description>
+      <Derived>
+        <GreaterOf>
+          <Dollar>0</Dollar>
+          <Subtract>
+            <Minuend>
+              <Dependency path="/scheduleA/medicalExpenses" />
+            </Minuend>
+            <Subtrahends>
+              <Dependency path="/scheduleA/medicalAgiThreshold" />
+            </Subtrahends>
+          </Subtract>
+        </GreaterOf>
+      </Derived>
+    </Fact>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAXES YOU PAID (Lines 5a-5e)
+         SALT deduction capped at $40,000 per OBBBA (TY2025)
+         ═══════════════════════════════════════════════════════════ -->
+
+    <Fact path="/scheduleA/stateTaxesPaid">
+      <Name>State and local income taxes</Name>
+      <Description>State and local income taxes paid (or general sales taxes) (Line 5a)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/localTaxesPaid">
+      <Name>Local taxes paid</Name>
+      <Description>Local income taxes paid (Line 5b)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/realEstateTaxes">
+      <Name>Real estate taxes</Name>
+      <Description>State and local real estate taxes (Line 5c)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/personalPropertyTaxes">
+      <Name>Personal property taxes</Name>
+      <Description>State and local personal property taxes (Line 5d)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/saltCap">
+      <Name>SALT deduction cap</Name>
+      <Description>Maximum state and local tax deduction.
+        OBBBA raised the SALT cap to $40,000 for TY2025.
+        §164(b)(6)</Description>
+      <TaxYear>2024</TaxYear>
+      <Derived>
+        <Switch>
+          <Case>
+            <When>
+              <Dependency module="filingStatus" path="/isFilingStatusMFS" />
+            </When>
+            <Then>
+              <Dollar>20000</Dollar>
+            </Then>
+          </Case>
+          <Case>
+            <When>
+              <True />
+            </When>
+            <Then>
+              <Dollar>40000</Dollar>
+            </Then>
+          </Case>
+        </Switch>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleA/saltBeforeCap">
+      <Name>SALT before cap</Name>
+      <Description>Sum of state, local, real estate, and personal property taxes before cap</Description>
+      <Derived>
+        <Add>
+          <Dependency path="/scheduleA/stateTaxesPaid" />
+          <Dependency path="/scheduleA/localTaxesPaid" />
+          <Dependency path="/scheduleA/realEstateTaxes" />
+          <Dependency path="/scheduleA/personalPropertyTaxes" />
+        </Add>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleA/totalSaltDeduction">
+      <Name>Total SALT deduction</Name>
+      <Description>Total state and local tax deduction, capped at the SALT cap (Line 5e)</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <LesserOf>
+          <Dependency path="/scheduleA/saltBeforeCap" />
+          <Dependency path="/scheduleA/saltCap" />
+        </LesserOf>
+      </Derived>
+    </Fact>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         INTEREST YOU PAID (Lines 8a-8d, 10)
+         ═══════════════════════════════════════════════════════════ -->
+
+    <Fact path="/scheduleA/homeMortgageInterest">
+      <Name>Home mortgage interest</Name>
+      <Description>Home mortgage interest and points reported on Form 1098 (Line 8a)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/homeMortgageInterestNotReported">
+      <Name>Home mortgage interest not reported</Name>
+      <Description>Home mortgage interest not reported on Form 1098 (Line 8b)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/mortgageInsurancePremiums">
+      <Name>Mortgage insurance premiums</Name>
+      <Description>Mortgage insurance premiums (Line 8d)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/totalInterestDeduction">
+      <Name>Total interest deduction</Name>
+      <Description>Total interest you paid (Line 10)</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <Add>
+          <Dependency path="/scheduleA/homeMortgageInterest" />
+          <Dependency path="/scheduleA/homeMortgageInterestNotReported" />
+          <Dependency path="/scheduleA/mortgageInsurancePremiums" />
+        </Add>
+      </Derived>
+    </Fact>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         GIFTS TO CHARITY (Lines 11-14)
+         Cash gifts limited to 60% of AGI
+         ═══════════════════════════════════════════════════════════ -->
+
+    <Fact path="/scheduleA/charityCash">
+      <Name>Charity cash contributions</Name>
+      <Description>Gifts by cash or check (Line 11)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/charityNonCash">
+      <Name>Charity non-cash contributions</Name>
+      <Description>Other than by cash or check (Line 12)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/charityCarryover">
+      <Name>Charity carryover from prior year</Name>
+      <Description>Carryover from prior year (Line 13)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <Fact path="/scheduleA/charityAgiLimit">
+      <Name>Charity AGI limit</Name>
+      <Description>60% of AGI — general limit on charitable cash contributions</Description>
+      <Derived>
+        <Round>
+          <Multiply>
+            <Dependency module="taxCalculations" path="/agi" />
+            <Decimal>0.60</Decimal>
+          </Multiply>
+        </Round>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleA/charityBeforeLimit">
+      <Name>Charity contributions before limit</Name>
+      <Description>Sum of all charitable contributions before AGI limit</Description>
+      <Derived>
+        <Add>
+          <Dependency path="/scheduleA/charityCash" />
+          <Dependency path="/scheduleA/charityNonCash" />
+          <Dependency path="/scheduleA/charityCarryover" />
+        </Add>
+      </Derived>
+    </Fact>
+
+    <Fact path="/scheduleA/totalCharityDeduction">
+      <Name>Total charitable deduction</Name>
+      <Description>Total gifts to charity, limited to 60% of AGI (Line 14)</Description>
+      <Export downstreamFacts="true" />
+      <Derived>
+        <LesserOf>
+          <Dependency path="/scheduleA/charityBeforeLimit" />
+          <Dependency path="/scheduleA/charityAgiLimit" />
+        </LesserOf>
+      </Derived>
+    </Fact>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         OTHER ITEMIZED DEDUCTIONS (Line 16)
+         ═══════════════════════════════════════════════════════════ -->
+
+    <Fact path="/scheduleA/otherItemizedDeductions">
+      <Name>Other itemized deductions</Name>
+      <Description>Other itemized deductions such as casualty losses, gambling losses, etc. (Line 16)</Description>
+      <Writable>
+        <Dollar />
+      </Writable>
+    </Fact>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TOTAL ITEMIZED DEDUCTIONS (Line 17)
+         ═══════════════════════════════════════════════════════════ -->
+
+    <Fact path="/scheduleA/totalItemizedDeductions">
+      <Name>Total itemized deductions</Name>
+      <Description>Total of all itemized deductions (Line 17).
+        Sum of medical + SALT + interest + charity + other</Description>
+      <Export downstreamFacts="true" mef="true" />
+      <Derived>
+        <Add>
+          <Dependency path="/scheduleA/medicalDeductibleAmount" />
+          <Dependency path="/scheduleA/totalSaltDeduction" />
+          <Dependency path="/scheduleA/totalInterestDeduction" />
+          <Dependency path="/scheduleA/totalCharityDeduction" />
+          <Dependency path="/scheduleA/otherItemizedDeductions" />
+        </Add>
+      </Derived>
+    </Fact>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         COMPLETION FLAG
+         ═══════════════════════════════════════════════════════════ -->
+
+    <Fact path="/scheduleA/isComplete">
+      <Name>Schedule A is complete</Name>
+      <Description>Whether the taxpayer has completed all Schedule A inputs</Description>
+      <Derived>
+        <All>
+          <IsComplete>
+            <Dependency path="/scheduleA/medicalExpenses" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/stateTaxesPaid" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/localTaxesPaid" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/realEstateTaxes" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/personalPropertyTaxes" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/homeMortgageInterest" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/homeMortgageInterestNotReported" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/mortgageInsurancePremiums" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/charityCash" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/charityNonCash" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/charityCarryover" />
+          </IsComplete>
+          <IsComplete>
+            <Dependency path="/scheduleA/otherItemizedDeductions" />
+          </IsComplete>
+        </All>
+      </Derived>
+    </Fact>
+
+  </Facts>
+</FactDictionaryModule>

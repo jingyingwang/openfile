@@ -211,18 +211,17 @@
 
     <Fact path="/wantsStandardDeduction">
       <Name>Wants standard deduction</Name>
-      <Description>Will the taxpayer take the standard deduction?</Description>
+      <Description>Will the taxpayer take the standard deduction? True = standard, False = itemized.</Description>
 
-      <Derived>
-        <True />
-      </Derived>
+      <Writable>
+        <Boolean />
+      </Writable>
     </Fact>
 
     <Fact path="/standardOrItemizedDeductions">
       <Name>Standard or itemized deductions</Name>
       <Description>The taxpayer's choice of standard or itemized deductions as reported on line 12
-        of Form 1040.
-        Currently only the standard deduction is supported.</Description>
+        of Form 1040.</Description>
       <Export mef="true" />
 
       <Derived>
@@ -234,6 +233,16 @@
               </When>
               <Then>
                 <Dependency module="standardDeduction" path="/standardDeduction" />
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <Not>
+                  <Dependency path="/wantsStandardDeduction" />
+                </Not>
+              </When>
+              <Then>
+                <Dependency module="scheduleA" path="/scheduleA/totalItemizedDeductions" />
               </Then>
             </Case>
           </Switch>
