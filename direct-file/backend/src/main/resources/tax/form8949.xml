@@ -208,7 +208,8 @@
     <Fact path="/form8949Transactions/*/writableIsShortTerm">
       <Name>Is short-term (user-entered)</Name>
       <Description>Whether the asset was held for one year or less (short-term capital gain/loss).
-        The user selects this based on their 1099-B or holding period knowledge.</Description>
+        The user selects this
+        based on their 1099-B or holding period knowledge.</Description>
 
       <Writable>
         <Boolean />

@@ -42,7 +42,8 @@
     <Fact path="/trumpAccountContributionAmount">
       <Name>Trump Account contribution amount</Name>
       <Description>Total contributions made to Trump Accounts in the tax year. The taxpayer should
-        report the total from Form 4547.</Description>
+        report the total from
+        Form 4547.</Description>
       <Writable>
         <Dollar />
       </Writable>
@@ -68,7 +69,8 @@
 
     <Fact path="/trumpAccountAdjustment">
       <Name>Trump Account Adjustment</Name>
-      <Description>Trump Account deduction for Schedule 1. Lesser of actual contributions or maximum based on qualifying children.</Description>
+      <Description>Trump Account deduction for Schedule 1. Lesser of actual contributions or maximum based on qualifying
+        children.</Description>
       <Export downstreamFacts="true" mef="true" />
       <Derived>
         <Switch>

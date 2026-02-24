@@ -28,7 +28,8 @@
 
     <Fact path="/seSocialSecurityWageBase">
       <Description>Social Security wage base for SE tax. For TY2024 this is $168,600.
-        Only the first this-amount of net SE earnings is subject to the 12.4% SS portion.</Description>
+        Only the first this-amount of net
+        SE earnings is subject to the 12.4% SS portion.</Description>
       <Export downstreamFacts="true" />
       <TaxYear>2024</TaxYear>
       <Derived>
@@ -44,7 +45,8 @@
     <Fact path="/totalSEIncome">
       <Name>Total self-employment income</Name>
       <Description>Schedule SE line 3. Net profit (or loss) from Schedule C plus net farm profit.
-        Since farm income is out of scope, this equals Schedule C total net profit.</Description>
+        Since farm income is
+        out of scope, this equals Schedule C total net profit.</Description>
       <Export mef="true" />
       <Derived>
         <Switch>
@@ -75,7 +77,8 @@
     <Fact path="/netSEEarnings">
       <Name>Net self-employment earnings</Name>
       <Description>Schedule SE line 4a. 92.35% of total SE income (line 3).
-        This reflects the "employer equivalent" deduction — self-employed individuals
+        This reflects the "employer equivalent"
+        deduction — self-employed individuals
         only pay SE tax on 92.35% of net income, mirroring how employees only pay
         FICA on wages (the employer pays the other half).</Description>
       <Export mef="true" />
@@ -101,7 +104,8 @@
     <!-- Social Security portion: 12.4% on lesser of net SE earnings or wage base -->
     <Fact path="/seEarningsSubjectToSS">
       <Description>The amount of net SE earnings subject to Social Security tax.
-        This is the lesser of net SE earnings or the SS wage base ($168,600 for TY2024).</Description>
+        This is the lesser of net SE earnings or
+        the SS wage base ($168,600 for TY2024).</Description>
       <Derived>
         <LesserOf>
           <Dependency path="/netSEEarnings" />
@@ -140,7 +144,8 @@
     <Fact path="/seTax">
       <Name>Self-employment tax</Name>
       <Description>Schedule SE line 12. Total self-employment tax (SS + Medicare).
-        This amount is added to Schedule 2 (additional taxes owed) and flows
+        This amount is added to Schedule 2
+        (additional taxes owed) and flows
         to Form 1040 line 23.</Description>
       <Export mef="true" downstreamFacts="true" />
       <Derived>
@@ -158,7 +163,8 @@
     <Fact path="/deductibleHalfOfSETax">
       <Name>Deductible half of self-employment tax</Name>
       <Description>Schedule SE line 13. 50% of SE tax, deductible as an adjustment
-        to income on Schedule 1 line 15. This flows into
+        to income on Schedule 1 line 15. This
+        flows into
         /adjustmentsToIncomeExcludingStudentLoanInterest in taxCalculations.</Description>
       <Export mef="true" downstreamFacts="true" />
       <Derived>

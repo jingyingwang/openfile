@@ -1182,7 +1182,8 @@
 
     <Fact path="/hdhpMinAnnualDeductibleSelf">
       <Description>High Deductible Health Plan (HDHP) minimum annual deductible for self-only coverage
-        Rev Proc 2024-40 §223</Description>
+        Rev Proc 2024-40
+        §223</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
         <Dollar>1650</Dollar>
@@ -1218,7 +1219,8 @@
 
     <Fact path="/hdhpMaxOOPExpensesSelf">
       <Description>High Deductible Health Plan (HDHP) maximum out-of-pocket expenses for self-only coverage
-        Rev Proc 2024-40 §223</Description>
+        Rev Proc
+        2024-40 §223</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
         <Dollar>8300</Dollar>
@@ -1236,7 +1238,8 @@
 
     <Fact path="/hdhpMaxOOPExpensesFamily">
       <Description>High Deductible Health Plan (HDHP) maximum out-of-pocket expenses for family coverage
-        Rev Proc 2024-40 §223</Description>
+        Rev Proc 2024-40
+        §223</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
         <Dollar>16600</Dollar>

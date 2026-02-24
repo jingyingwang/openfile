@@ -11,8 +11,10 @@
     <Fact path="/totalQualifiedBusinessIncome">
       <Name>Total qualified business income</Name>
       <Description>Total QBI from all qualified trades or businesses (Form 8995 line 2).
-        For this simplified implementation, QBI equals Schedule C total net profit.
-        If the total is negative, treat as zero (losses carry forward but are not
+        For this simplified
+        implementation, QBI equals Schedule C total net profit.
+        If the total is negative, treat as zero (losses carry
+        forward but are not
         deductible via Form 8995 in the current year).</Description>
       <Export mef="true" />
       <Derived>
@@ -64,7 +66,8 @@
     <Fact path="/taxableIncomeBeforeQBI">
       <Name>Taxable income before QBI deduction</Name>
       <Description>Form 1040 line 11 (AGI) minus line 12 (standard or itemized deductions),
-        before the QBI deduction is applied (Form 8995 line 4).</Description>
+        before the QBI deduction is
+        applied (Form 8995 line 4).</Description>
       <Derived>
         <Subtract>
           <Minuend>
@@ -82,7 +85,8 @@
     <Fact path="/taxableIncomeBeforeQBIFloored">
       <Name>Taxable income before QBI (floored at zero)</Name>
       <Description>Taxable income before QBI deduction, but not less than zero.
-        Used for the 20% income limitation calculation (Form 8995 line 6).</Description>
+        Used for the 20% income limitation
+        calculation (Form 8995 line 6).</Description>
       <Derived>
         <Switch>
           <Case>
@@ -115,7 +119,8 @@
     <Fact path="/incomeLimitation">
       <Name>Income limitation</Name>
       <Description>20% of taxable income before QBI deduction, minus net capital gain
-        (Form 8995 lines 5-7). Net capital gain is stubbed to $0.</Description>
+        (Form 8995 lines 5-7). Net capital
+        gain is stubbed to $0.</Description>
       <Derived>
         <Round>
           <Multiply>
@@ -131,7 +136,8 @@
     <Fact path="/qbiThreshold">
       <Name>QBI income threshold</Name>
       <Description>The income threshold for using the simplified Form 8995.
-        $191,950 for Single, HOH, and MFS; $383,900 for MFJ and QSS.
+        $191,950 for Single, HOH, and MFS; $383,900
+        for MFJ and QSS.
         Tax year 2024 values per Rev. Proc. 2023-34.</Description>
       <TaxYear>2024</TaxYear>
       <Derived>
@@ -162,7 +168,8 @@
     <Fact path="/isUnderQBIThreshold">
       <Name>Under QBI threshold</Name>
       <Description>Whether taxable income before QBI is at or below the threshold,
-        making the taxpayer eligible for the simplified Form 8995 computation.</Description>
+        making the taxpayer eligible for the
+        simplified Form 8995 computation.</Description>
       <Derived>
         <LessThanOrEqual>
           <Left>
@@ -180,7 +187,8 @@
     <Fact path="/qbiDeductionBeforeCap">
       <Name>QBI deduction before cap</Name>
       <Description>The lesser of QBI component (20% of QBI) and income limitation
-        (20% of taxable income before QBI). Form 8995 line 9.</Description>
+        (20% of taxable income before QBI).
+        Form 8995 line 9.</Description>
       <Derived>
         <LesserOf>
           <Dependency path="/qbiComponent" />
@@ -194,9 +202,11 @@
     <Fact path="/qbiDeduction">
       <Name>Qualified business income deduction</Name>
       <Description>The QBI deduction for Form 1040 line 13 (Form 8995 line 13).
-        Lesser of the deduction before cap and taxable income before QBI.
+        Lesser of the deduction before cap and
+        taxable income before QBI.
         Only computed when under the simplified-form threshold and QBI is positive;
-        $0 otherwise.</Description>
+        $0
+        otherwise.</Description>
       <Export mef="true" />
       <Derived>
         <Switch>

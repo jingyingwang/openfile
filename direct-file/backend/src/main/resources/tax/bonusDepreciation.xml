@@ -38,7 +38,8 @@
     <Fact path="/bonusDepreciationAmount">
       <Name>Bonus depreciation amount</Name>
       <Description>100% bonus depreciation amount for Schedule C line 13. This is the cost of
-        qualifying business assets placed in service during the tax year.</Description>
+        qualifying business assets
+        placed in service during the tax year.</Description>
       <Writable>
         <Dollar />
       </Writable>
@@ -47,7 +48,8 @@
     <Fact path="/bonusDepreciationDeduction">
       <Name>Bonus Depreciation Deduction</Name>
       <Description>Bonus depreciation deduction for Schedule C line 13. Under OBBBA, 100% of the cost
-        of qualifying assets is deductible in the year placed in service.</Description>
+        of qualifying
+        assets is deductible in the year placed in service.</Description>
       <Export downstreamFacts="true" mef="true" />
       <Derived>
         <Switch>

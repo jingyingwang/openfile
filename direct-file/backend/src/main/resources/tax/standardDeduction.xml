@@ -191,7 +191,8 @@
     <Fact path="/additionalStandardDeductionMultiplier">
       <Name>Additional standard deduction multiplier</Name>
       <Description>The amount to add to the standard deduction for each additional item.
-        Rev Proc 2024-40 Standard Deduction §63(f)</Description>
+        Rev Proc 2024-40 Standard
+        Deduction §63(f)</Description>
       <TaxYear>2025</TaxYear>
 
       <Derived>
@@ -283,7 +284,8 @@
     <Fact path="/singleOrMFSStandardDeduction">
       <Name>Single or Married Filing Separately Standard Deduction</Name>
       <Description>Standard Deduction for filers who are married filing separately or single.
-        Rev Proc 2024-40, OBBBA §1(j)(2)(C) §1(j)(2)(D)
+        Rev Proc 2024-40, OBBBA
+        §1(j)(2)(C) §1(j)(2)(D)
       </Description>
       <TaxYear>2025</TaxYear>
 
@@ -368,8 +370,10 @@
     <Fact path="/seniorStandardDeductionAmount">
       <Name>OBBBA Senior Standard Deduction Amount</Name>
       <Description>Additional standard deduction for taxpayers age 65 or older under OBBBA.
-        Available TY2025-2028. $4,000 per qualifying individual. Not available to MFS filers.
-        Phaseout: reduced by $0.06 per $1 of MAGI over threshold ($75,000 Single/HoH, $150,000 MFJ).</Description>
+        Available TY2025-2028. $4,000
+        per qualifying individual. Not available to MFS filers.
+        Phaseout: reduced by $0.06 per $1 of MAGI over threshold
+        ($75,000 Single/HoH, $150,000 MFJ).</Description>
       <TaxYear>2025</TaxYear>
 
       <Derived>
@@ -380,7 +384,8 @@
     <Fact path="/seniorStandardDeductionQualifyingCount">
       <Name>OBBBA Senior Standard Deduction Qualifying Count</Name>
       <Description>Number of individuals qualifying for the OBBBA senior standard deduction bonus.
-        Counts primary filer if 65+ and secondary filer if 65+ (for MFJ).
+        Counts primary filer
+        if 65+ and secondary filer if 65+ (for MFJ).
         MFS filers are excluded entirely. Available TY2025-2028.</Description>
       <TaxYear>2025</TaxYear>
 
@@ -429,8 +434,10 @@
     <Fact path="/seniorStandardDeductionBeforePhaseout">
       <Name>OBBBA Senior Standard Deduction Before Phaseout</Name>
       <Description>Total OBBBA senior standard deduction before MAGI phaseout.
-        Qualifying count × $4,000. TODO: Apply phaseout reduction of $0.06 per $1 of MAGI
-        over threshold ($75,000 Single/HoH, $150,000 MFJ) in a follow-up phase.</Description>
+        Qualifying count × $4,000. TODO: Apply
+        phaseout reduction of $0.06 per $1 of MAGI
+        over threshold ($75,000 Single/HoH, $150,000 MFJ) in a follow-up
+        phase.</Description>
       <TaxYear>2025</TaxYear>
 
       <Derived>
@@ -457,7 +464,8 @@
     <Fact path="/normalStandardDeduction">
       <Name>Normal standard deduction</Name>
       <Description>The amount to use as the standard deduction if a filer cannot be claimed as a dependent.
-        Includes OBBBA senior standard deduction bonus for TY2025+.</Description>
+        Includes
+        OBBBA senior standard deduction bonus for TY2025+.</Description>
       <TaxYear>2025</TaxYear>
 
       <Derived>
@@ -494,7 +502,8 @@
       <Name>Minimum standard deduction</Name>
       <Description>The alternative amount to use as the standard deduction if a filer can be claimed as a dependent.
         This amount is not used if it exceeds the normal amount of the standard deduction.
-        Rev Proc 2024-40 Standard Deduction §63(c)(5)</Description>
+        Rev Proc 2024-40 Standard
+        Deduction §63(c)(5)</Description>
       <TaxYear>2025</TaxYear>
 
       <Derived>

@@ -9435,7 +9435,8 @@
 
     <Fact path="/ptcRepaymentLimitationLessThan200PercentFplSingle">
       <Description>Repayment limitation based on lt 200% FPL (federal poverty limit) and single
-        Rev Proc 2024-40 § 36B(f)(2)(B)</Description>
+        Rev Proc 2024-40 §
+        36B(f)(2)(B)</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
         <Dollar>375</Dollar>

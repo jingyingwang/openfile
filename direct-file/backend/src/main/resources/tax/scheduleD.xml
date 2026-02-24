@@ -198,7 +198,8 @@
     <Fact path="/requiresQDCGWorksheet">
       <Name>Requires QDCG Tax Worksheet</Name>
       <Description>Whether the Qualified Dividends and Capital Gain Tax Worksheet is needed
-        (when taxpayer has qualified dividends or net capital gain that qualify for preferential rates).</Description>
+        (when taxpayer has qualified
+        dividends or net capital gain that qualify for preferential rates).</Description>
       <Export downstreamFacts="true" />
 
       <Derived>

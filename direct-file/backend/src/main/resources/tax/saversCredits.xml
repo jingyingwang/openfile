@@ -15,7 +15,8 @@
     <Fact path="/maxIncomeLimitForMFJ">
       <Description>max income before becoming ineligible as MFJ
         Rev Proc 2024-40, adjusted limitation under
-        25B(b)(1)(C) and 25B(b)(1)(D)
+        25B(b)(1)(C)
+        and 25B(b)(1)(D)
       </Description>
       <TaxYear>2025</TaxYear>
       <Derived>
@@ -37,7 +38,8 @@
     <Fact path="/maxIncomeLimitForHOH">
       <Description>max income before becoming ineligible as HoH
         Rev Proc 2024-40, adjusted limitation under
-        25B(b)(1)(C) and 25B(b)(1)(D)
+        25B(b)(1)(C)
+        and 25B(b)(1)(D)
       </Description>
       <TaxYear>2025</TaxYear>
       <Derived>

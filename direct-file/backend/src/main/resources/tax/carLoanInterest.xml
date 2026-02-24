@@ -25,7 +25,8 @@
     <Fact path="/carLoanIsQualified">
       <Name>Car loan is qualified</Name>
       <Description>Whether the car loan meets the OBBBA qualification criteria: must be for a vehicle
-        manufactured or assembled in the United States, and the loan must have been originated by a
+        manufactured or
+        assembled in the United States, and the loan must have been originated by a
         US-based lender</Description>
       <Writable>
         <Boolean />

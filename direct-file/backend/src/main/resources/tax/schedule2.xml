@@ -102,7 +102,8 @@
 
     <Fact path="/totalAdditionalTaxesOwed">
       <Description>Line 21 of Schedule 2 for line 23 of Form 1040. Sum of all additional taxes
-        including AMT (Part I, line 1), PTC repayment (Part I, line 2),
+        including AMT (Part I,
+        line 1), PTC repayment (Part I, line 2),
         and SE tax (Part II, line 4).</Description>
       <Export mef="true" downstreamFacts="true" />
       <Derived>

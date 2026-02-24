@@ -722,7 +722,8 @@
     <Fact path="/capitalGainsScheduleDNotRequired">
       <Name>Capital Gains Schedule D Not Required</Name>
       <Description>1040 checkbox to be marked when *nonzero* gain/loss is exempt from Schedule D requirement.
-        Only marked when capital gain distributions are the only capital gains and no Form 8949 is needed.
+        Only marked
+        when capital gain distributions are the only capital gains and no Form 8949 is needed.
       </Description>
       <Export mef="true" />
       <Derived>

@@ -30,7 +30,8 @@
 
     <Fact path="/amtExemptionMFJ">
       <Description>AMT exemption for Married Filing Jointly and Qualifying Surviving Spouse.
-        Rev Proc 2023-34 §55(d)(1)(A)</Description>
+        Rev Proc 2023-34
+        §55(d)(1)(A)</Description>
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>133300</Dollar>
@@ -39,7 +40,8 @@
 
     <Fact path="/amtExemptionMFJ">
       <Description>AMT exemption for Married Filing Jointly and Qualifying Surviving Spouse.
-        Rev Proc 2024-40 §55(d)(1)(A)</Description>
+        Rev Proc 2024-40
+        §55(d)(1)(A)</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
         <Dollar>137000</Dollar>
@@ -67,7 +69,8 @@
     <!-- AMT Exemption Phaseout Thresholds — IRC §55(d)(2) -->
     <Fact path="/amtPhaseoutThresholdSingleHOH">
       <Description>AMTI threshold above which the AMT exemption begins to phase out
-        for Single and Head of Household filers.
+        for Single and Head of Household
+        filers.
         Rev Proc 2023-34 §55(d)(2)</Description>
       <TaxYear>2024</TaxYear>
       <Derived>
@@ -77,7 +80,8 @@
 
     <Fact path="/amtPhaseoutThresholdSingleHOH">
       <Description>AMTI threshold above which the AMT exemption begins to phase out
-        for Single and Head of Household filers.
+        for Single and Head of Household
+        filers.
         Rev Proc 2024-40 §55(d)(2)</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
@@ -87,7 +91,8 @@
 
     <Fact path="/amtPhaseoutThresholdMFJ">
       <Description>AMTI threshold above which the AMT exemption begins to phase out
-        for Married Filing Jointly and Qualifying Surviving Spouse.
+        for Married Filing Jointly and
+        Qualifying Surviving Spouse.
         Rev Proc 2023-34 §55(d)(2)</Description>
       <TaxYear>2024</TaxYear>
       <Derived>
@@ -97,7 +102,8 @@
 
     <Fact path="/amtPhaseoutThresholdMFJ">
       <Description>AMTI threshold above which the AMT exemption begins to phase out
-        for Married Filing Jointly and Qualifying Surviving Spouse.
+        for Married Filing Jointly and
+        Qualifying Surviving Spouse.
         Rev Proc 2024-40 §55(d)(2)</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
@@ -128,7 +134,8 @@
     <!-- AMT 28% Rate Threshold — IRC §55(b)(1)(A)(i) -->
     <Fact path="/amtHighRateThreshold">
       <Description>AMTI threshold above which the 28% AMT rate applies (for non-MFS filers).
-        Rev Proc 2023-34 §55(b)(1)(A)(i)</Description>
+        Rev Proc 2023-34
+        §55(b)(1)(A)(i)</Description>
       <TaxYear>2024</TaxYear>
       <Derived>
         <Dollar>232600</Dollar>
@@ -137,7 +144,8 @@
 
     <Fact path="/amtHighRateThreshold">
       <Description>AMTI threshold above which the 28% AMT rate applies (for non-MFS filers).
-        Rev Proc 2024-40 §55(b)(1)(A)(i)</Description>
+        Rev Proc 2024-40
+        §55(b)(1)(A)(i)</Description>
       <TaxYear>2025</TaxYear>
       <Derived>
         <Dollar>239100</Dollar>
@@ -181,7 +189,8 @@
          amount must be added back for AMT purposes because AMT disallows this deduction. -->
     <Fact path="/amtStandardDeductionAdjustment">
       <Description>Form 6251 line 2a. Standard deduction claimed on Form 1040.
-        Must be added back for AMT because the standard deduction is not allowed
+        Must be added back for AMT because the
+        standard deduction is not allowed
         for AMT purposes. Only nonzero when the taxpayer claims the standard deduction.</Description>
       <Derived>
         <Switch>
@@ -230,7 +239,8 @@
     <Fact path="/amti">
       <Name>Alternative Minimum Taxable Income</Name>
       <Description>Form 6251 line 2s. Sum of taxable income and all AMT adjustments.
-        For Direct File's scope (standard deduction only), this equals
+        For Direct File's scope (standard
+        deduction only), this equals
         taxable income + standard deduction.</Description>
       <Export mef="true" />
       <Derived>
@@ -325,7 +335,8 @@
          Reduction = max(0, (AMTI − threshold)) × 25% -->
     <Fact path="/amtExemptionPhaseoutReduction">
       <Description>Form 6251 line 4. Amount by which the AMT exemption is reduced due to
-        high AMTI. Equals 25% of (AMTI − phaseout threshold), but not less than 0.</Description>
+        high AMTI. Equals 25% of (AMTI −
+        phaseout threshold), but not less than 0.</Description>
       <Derived>
         <Round>
           <GreaterOf>
@@ -375,7 +386,8 @@
     <!-- Form 6251, Line 6: AMTI minus exemption, but not less than 0 -->
     <Fact path="/amtiLessExemption">
       <Description>Form 6251 line 6. AMTI minus the AMT exemption amount.
-        This is the base amount subject to AMT tax rates.</Description>
+        This is the base amount subject to AMT tax
+        rates.</Description>
       <Derived>
         <Round>
           <GreaterOf>
@@ -402,7 +414,8 @@
     <!-- 28% rate threshold based on filing status -->
     <Fact path="/amtHighRateThresholdForFilingStatus">
       <Description>The AMTI threshold above which the 28% AMT rate applies,
-        based on filing status. MFS filers use half the normal threshold.</Description>
+        based on filing status. MFS filers use half
+        the normal threshold.</Description>
       <Derived>
         <Switch>
           <Case>
@@ -428,7 +441,8 @@
     <Fact path="/amtTentativeMinimumTax">
       <Name>Tentative minimum tax</Name>
       <Description>Form 6251 line 7. Tentative minimum tax computed using the AMT
-        rate structure: 26% on the first portion up to the threshold,
+        rate structure: 26% on the first
+        portion up to the threshold,
         28% on the excess.</Description>
       <Export mef="true" />
       <Derived>
@@ -505,7 +519,8 @@
          In a full implementation, this would subtract foreign tax credit. -->
     <Fact path="/amtRegularTax">
       <Description>Form 6251 line 8. Regular tax from Form 1040 line 16.
-        For Direct File's scope, this is the tentative tax from taxable income
+        For Direct File's scope, this is the tentative
+        tax from taxable income
         (no foreign tax credit adjustment needed).</Description>
       <Derived>
         <Dependency module="taxCalculations" path="/tentativeTaxFromTaxableIncome" />
@@ -517,9 +532,11 @@
     <Fact path="/amtAmount">
       <Name>Alternative Minimum Tax</Name>
       <Description>Form 6251 line 9. The Alternative Minimum Tax amount.
-        Equals the excess of tentative minimum tax over regular tax, or zero
+        Equals the excess of tentative minimum tax over
+        regular tax, or zero
         if regular tax exceeds tentative minimum tax. This amount flows to
-        Schedule 2, Part I, Line 1.</Description>
+        Schedule 2, Part I, Line
+        1.</Description>
       <Export mef="true" downstreamFacts="true" />
       <Derived>
         <Round>
